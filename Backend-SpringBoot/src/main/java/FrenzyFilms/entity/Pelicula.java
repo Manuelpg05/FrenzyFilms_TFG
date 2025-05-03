@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.URL;
+
 @Entity
 public class Pelicula extends DomainEntity {
 
@@ -41,10 +43,11 @@ public class Pelicula extends DomainEntity {
     private String sinopsis;
 
     @NotBlank
+    @URL
     private String cartel;
 
 	@Column(nullable = false)
-    private Double calificacionImdb;
+    private double calificacionImdb;
 
     // Atributos propios
     @NotBlank

@@ -1,13 +1,16 @@
 package FrenzyFilms.repository;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import FrenzyFilms.entity.Pelicula;
+import FrenzyFilms.entity.Sesion;
 
 @Repository
 public interface PeliculaRepository extends JpaRepository<Pelicula, Integer> {
-    List<Pelicula> findByTituloContainingIgnoreCase(String titulo);
+    Optional<Pelicula> findBySesionesContaining(Sesion sesion);
+    Optional<Pelicula> findByTmdbId(int tmdbId);
+
 }

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import FrenzyFilms.entity.Persona;
 
 @Repository
-public interface ActorRepository extends JpaRepository<Persona, Integer>{
-	public Optional<Persona> findByUsername(String username);
+public interface PersonaRepository extends JpaRepository<Persona, Integer>{
+	Optional<Persona> findByUsername(String username);
 }

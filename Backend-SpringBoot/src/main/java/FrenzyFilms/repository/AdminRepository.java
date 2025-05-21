@@ -9,5 +9,5 @@ import FrenzyFilms.entity.Admin;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Integer> {
-	public Optional<Admin> findByUsername(String username);
+	Optional<Admin> findByUsername(String username);
 }

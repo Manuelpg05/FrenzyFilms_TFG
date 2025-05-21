@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -14,29 +15,24 @@ import jakarta.validation.constraints.Min;
 
 @Entity
 public class Sesion extends DomainEntity {
-	
+
+	@Schema(type = "string", pattern = "dd-MM-yyyy", example = "21-05-2026")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	@Column(nullable = false)
 	private LocalDate fecha;
 
+	@Schema(type = "string", pattern = "HH:mm:ss", example = "15:30:00")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
 	@Column(nullable = false)
 	private LocalTime horaInicio;
-
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
-	@Column(nullable = false)
-	private LocalTime horaFin;
-
-	@Column(nullable = false)
-	@Min(0)
-	private int asientosDisponibles;
 
 	@Column(nullable = false)
 	@Min(0)
 	private double precioEntrada;
 
+	@Schema(hidden = true)
 	@OneToMany
-	@JoinColumn(name="sesion_id")
+	@JoinColumn(name = "sesion_id")
 	private Set<Entrada> entradas;
 
 	public Sesion() {
@@ -59,20 +55,12 @@ public class Sesion extends DomainEntity {
 		this.horaInicio = horaInicio;
 	}
 
-	public LocalTime getHoraFin() {
-		return horaFin;
+	public double getPrecioEntrada() {
+		return precioEntrada;
 	}
 
-	public void setHoraFin(LocalTime horaFin) {
-		this.horaFin = horaFin;
-	}
-
-	public int getAsientosDisponibles() {
-		return asientosDisponibles;
-	}
-
-	public void setAsientosDisponibles(int asientosDisponibles) {
-		this.asientosDisponibles = asientosDisponibles;
+	public void setPrecioEntrada(double precioEntrada) {
+		this.precioEntrada = precioEntrada;
 	}
 
 	public Set<Entrada> getEntradas() {

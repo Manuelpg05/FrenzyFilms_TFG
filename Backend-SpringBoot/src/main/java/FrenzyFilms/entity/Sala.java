@@ -2,6 +2,7 @@ package FrenzyFilms.entity;
 
 import java.util.Set;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -11,7 +12,7 @@ import jakarta.validation.constraints.Min;
 @Entity
 public class Sala extends DomainEntity {
 
-	@Column(nullable = false)
+	@Column(unique = true, nullable = false)
 	@Min(1)
 	private int numSala;
 
@@ -23,8 +24,9 @@ public class Sala extends DomainEntity {
 	@Min(1)
 	private int numColumnas;
 
+	@Schema(hidden = true)
 	@OneToMany
-	@JoinColumn(name="sala_id")
+	@JoinColumn(name = "sala_id")
 	private Set<Sesion> sesiones;
 
 	public Sala() {
@@ -53,6 +55,11 @@ public class Sala extends DomainEntity {
 
 	public void setNumColumnas(int numColumnas) {
 		this.numColumnas = numColumnas;
+	}
+
+	@Schema(hidden = true)
+	public int getNumAsientosTotal() {
+		return numColumnas * numFilas;
 	}
 
 	public Set<Sesion> getSesiones() {

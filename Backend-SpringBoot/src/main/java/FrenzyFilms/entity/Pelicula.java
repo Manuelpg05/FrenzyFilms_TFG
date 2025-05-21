@@ -2,32 +2,30 @@ package FrenzyFilms.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.hibernate.validator.constraints.URL;
 
 @Entity
 public class Pelicula extends DomainEntity {
 
-    // Atributos recogidos de la BD de OMDB
+    // Atributos recogidos de la BD de TMDB
+
     @NotBlank
     private String titulo;
 
-    @Column(nullable = false)
-    @Min(1800)
-    private int anio;
-
     @NotBlank
-    private ClasificacionEdad clasificacionEdad;
+    private String clasificacionEdad;
 
-	@Column(nullable = false)
+    @Column(nullable = false)
     private LocalDate fechaEstreno;
 
     @Column(nullable = false)
-    @Min(1)
     private int duracion;
 
     @NotBlank
@@ -36,27 +34,40 @@ public class Pelicula extends DomainEntity {
     @NotBlank
     private String director;
 
+    @Column(length = 2048)
     @NotBlank
     private String actores;
 
+    @Column(length = 2048)
     @NotBlank
     private String sinopsis;
 
-    @NotBlank
     @URL
+    @NotBlank
     private String cartel;
 
-	@Column(nullable = false)
-    private double calificacionImdb;
+    @URL
+    @NotBlank
+    private String banner;
+
+    @Column(nullable = false, unique = true)
+    private int tmdbId;
+
+    @Column(nullable = false)
+    private double calificacionTmdb;
 
     // Atributos propios
-    @NotBlank
     private Estado estado;
+
+    @OneToMany
+    @JoinColumn(name = "pelicula_id")
+    private Set<Sesion> sesiones;
 
     // Constructor por defecto
     public Pelicula() {
         super();
     }
+
     // Getters y setters
     public String getTitulo() {
         return titulo;
@@ -66,19 +77,11 @@ public class Pelicula extends DomainEntity {
         this.titulo = titulo;
     }
 
-    public int getAnio() {
-        return anio;
-    }
-
-    public void setAnio(int anio) {
-        this.anio = anio;
-    }
-
-    public ClasificacionEdad getClasificacionEdad() {
+    public String getClasificacionEdad() {
         return clasificacionEdad;
     }
 
-    public void setClasificacionEdad(ClasificacionEdad clasificacionEdad) {
+    public void setClasificacionEdad(String clasificacionEdad) {
         this.clasificacionEdad = clasificacionEdad;
     }
 
@@ -138,12 +141,28 @@ public class Pelicula extends DomainEntity {
         this.cartel = cartel;
     }
 
-    public Double getCalificacionImdb() {
-        return calificacionImdb;
+    public String getBanner() {
+        return banner;
     }
 
-    public void setCalificacionImdb(Double calificacionImdb) {
-        this.calificacionImdb = calificacionImdb;
+    public void setBanner(String banner) {
+        this.banner = banner;
+    }
+
+    public int getTmdbId() {
+        return tmdbId;
+    }
+
+    public void setTmdbId(int tmdbId) {
+        this.tmdbId = tmdbId;
+    }
+
+    public Double getCalificacionTmdb() {
+        return calificacionTmdb;
+    }
+
+    public void setCalificacionTmdb(Double calificacionTmdb) {
+        this.calificacionTmdb = calificacionTmdb;
     }
 
     public Estado getEstado() {
@@ -152,5 +171,13 @@ public class Pelicula extends DomainEntity {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    public Set<Sesion> getSesiones() {
+        return sesiones;
+    }
+
+    public void setSesiones(Set<Sesion> sesiones) {
+        this.sesiones = sesiones;
     }
 }

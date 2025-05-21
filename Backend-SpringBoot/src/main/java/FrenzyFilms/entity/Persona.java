@@ -2,6 +2,7 @@ package FrenzyFilms.entity;
 
 import org.hibernate.validator.constraints.URL;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
@@ -18,16 +19,13 @@ public abstract class Persona extends DomainEntity {
 
 	@NotBlank
 	@Email
+	@Column(unique = true)
 	private String email;
-
-	@NotBlank
-	private String direccion;
 
 	@NotBlank
 	@Pattern(regexp = "^[6-9]\\d{8}$")
 	private String telefono;
 
-	@NotBlank
 	@URL
 	private String foto;
 
@@ -38,6 +36,7 @@ public abstract class Persona extends DomainEntity {
 	@NotBlank
 	private String password;
 
+		@Schema(hidden = true)
 	private Roles rol;
 
 	public Persona() {
@@ -60,14 +59,6 @@ public abstract class Persona extends DomainEntity {
 		this.email = email;
 	}
 
-	public String getDireccion() {
-		return direccion;
-	}
-
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
-	
 	public String getTelefono() {
 		return telefono;
 	}

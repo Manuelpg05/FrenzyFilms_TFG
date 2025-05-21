@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FrenzyFilmsApplication<FrenzyFilms>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "FrenzyFilms.FrenzyFilmsApplication",
+            "projectName": "FrenzyFilms",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

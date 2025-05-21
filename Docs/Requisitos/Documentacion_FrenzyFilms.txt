@@ -1,0 +1,70 @@
+
+Proyecto FrenzyFilms
+
+CONTEXTO
+
+FrenzyFilms es una aplicación web destinada a facilitar la visualización de la cartelera de películas, la gestión de sesiones de cine y la compra de entradas por parte de usuarios registrados. El sistema utiliza Angular para el frontend y Spring Boot para el backend. Las películas mostradas en la cartelera se importan desde la API pública OMDb.
+
+REQUISITOS DE INFORMACIÓN
+
+Los actores del sistema son: administradores y usuarios. 
+
+Para cada actor el sistema almacena:
+- Administrador: nombre, apellido, correo electrónico, contraseña (codificada).
+- Usuario: nombre, apellido, correo electrónico, contraseña (codificada), entradas adquiridas.
+
+Además, el sistema guarda información sobre:
+- Película: título, duración (en minutos), género, estado (CARTELERA, PROXIMAMENTE, DESCARTADA).
+- Sala: número de sala, número de filas, número de asientos por fila.
+- Sesión: fecha, hora de inicio, entradas asociadas, película asociada, sala asociada.
+- Entrada: número de fila, número de asiento, sesión asociada.
+
+REQUISITOS FUNCIONALES
+
+1. Usuario no registrado (visitante):
+  a. Registrarse como usuario.
+  b. Ver todas las películas en cartelera.
+  c. Ver sesiones futuras por película.
+
+2. Usuario registrado (rol USER):
+  a. Comprar entradas para sesiones futuras.
+    Validaciones:
+    - No se pueden comprar entradas para sesiones ya iniciadas.
+    - No se pueden comprar más de 10 entradas para la misma sesión.
+    - No se puede seleccionar un asiento inexistente.
+    - No se puede comprar una entrada para un asiento ya ocupado.
+  b. Consultar sus entradas compradas.
+  c. Cancelar entradas compradas.
+    Validaciones:
+    - Solo se puede cancelar una entrada hasta una hora antes del inicio de la sesión.
+    - Solo se puede cancelar una entrada propia.
+  d. Modificar sus datos personales (nombre, apellidos, email, contraseña).
+  e. Eliminar su cuenta.
+    Validaciones:
+    - No se puede eliminar si tiene entradas en sesiones futuras.
+
+3. Usuario administrador (rol ADMIN):
+  a. Crear, modificar y eliminar películas.
+    Validaciones:
+    - Al importar película desde TMDB debe existir el ID.
+  b. Crear, modificar y eliminar salas.
+  c. Crear, modificar y eliminar sesiones.
+    Validaciones:
+    - No se puede crear ni actualizar una sesión con fecha pasada.
+    - No se puede crear ni actualizar una sesión si entra en conflicto de horario con otra en la misma sala.
+    - No se puede modificar una sesión si ya tiene entradas vendidas.
+  d. Consultar todas las entradas vendidas por sesión.
+  e. Registrar, modificar y eliminar administradores.
+
+REQUISITOS NO FUNCIONALES
+
+1. El sistema utiliza PostgreSQL como base de datos.
+2. La aplicación debe estar desplegada en el puerto 8080.
+3. Los datos sensibles (contraseñas) deben almacenarse cifrados (bcrypt).
+4. La comunicación por correo electrónico (SMTP de Gmail) debe usar TLS.
+5. El sistema debe utilizar JWT para autenticación y autorización.
+6. El sistema debe cumplir con la normativa GDPR, permitiendo a usuarios eliminar su cuenta.
+7. El sistema utiliza la API de TMDb para importar información de películas.
+8. La documentación y especificaciones de los endpoints deben estar disponibles mediante Swagger.
+9. Las imágenes y posters de las películas se enlazan externamente desde TMDB y OMDb.
+

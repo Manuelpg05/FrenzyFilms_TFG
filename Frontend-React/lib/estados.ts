@@ -1,0 +1,8 @@
+// lib/estados.ts
+
+export enum Estado {
+  DISPONIBLE = "DISPONIBLE",
+  ESTRENO = "ESTRENO",
+  PROXIMAMENTE = "PROXIMAMENTE",
+  DESCATALOGADA = "DESCATALOGADA",
+}

@@ -65,7 +65,8 @@ export default function MovieGrid() {
 
             {hoveredId === movie.id.toString() && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <Button asChild className={isAdmin ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"}>
+                <Button asChild className={`${isAdmin ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"
+                  } text-white`}>
                   <Link href={`/pelicula/${movie.id}`}>
                     {isAdmin ? (
                       <>

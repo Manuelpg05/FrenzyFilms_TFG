@@ -3,51 +3,19 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
-
-// Datos de ejemplo para próximos estrenos
-const upcomingMovies = [
-  {
-    id: "101",
-    title: "Avatar 3",
-    releaseDate: "20 Dic 2024",
-    poster: "/placeholder.svg?height=600&width=400",
-  },
-  {
-    id: "102",
-    title: "Guardianes de la Galaxia Vol. 4",
-    releaseDate: "5 May 2025",
-    poster: "/placeholder.svg?height=600&width=400",
-  },
-  {
-    id: "103",
-    title: "John Wick 5",
-    releaseDate: "23 Mar 2025",
-    poster: "/placeholder.svg?height=600&width=400",
-  },
-  {
-    id: "104",
-    title: "Jurassic World 4",
-    releaseDate: "7 Jul 2025",
-    poster: "/placeholder.svg?height=600&width=400",
-  },
-  {
-    id: "105",
-    title: "Fast & Furious 11",
-    releaseDate: "2 Abr 2025",
-    poster: "/placeholder.svg?height=600&width=400",
-  },
-  {
-    id: "106",
-    title: "Black Panther 3",
-    releaseDate: "11 Nov 2025",
-    poster: "/placeholder.svg?height=600&width=400",
-  },
-]
+import { getProximosEstrenos } from "@/lib/api"
 
 export default function ComingSoon() {
+  const [upcomingMovies, setUpcomingMovies] = useState<any[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
+
+  useEffect(() => {
+    getProximosEstrenos()
+      .then((data) => setUpcomingMovies(data))
+      .catch((err) => console.error(err))
+  }, [])
 
   const checkScrollButtons = () => {
     if (scrollRef.current) {
@@ -61,7 +29,6 @@ export default function ComingSoon() {
     const scrollElement = scrollRef.current
     if (scrollElement) {
       scrollElement.addEventListener("scroll", checkScrollButtons)
-      // Verificar inicialmente
       checkScrollButtons()
       return () => scrollElement.removeEventListener("scroll", checkScrollButtons)
     }
@@ -106,31 +73,45 @@ export default function ComingSoon() {
           </div>
         </div>
 
-        <div
-          ref={scrollRef}
-          className="flex space-x-6 overflow-x-auto scrollbar-hide pb-4"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {upcomingMovies.map((movie) => (
-            <div
-              key={movie.id}
-              className="flex-shrink-0 w-[220px] bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-red-600/20 hover:shadow-xl"
-            >
-              <img
-                src={movie.poster || "/placeholder.svg"}
-                alt={movie.title}
-                className="w-full h-[300px] object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{movie.title}</h3>
-                <div className="flex items-center text-gray-400 text-sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  <span>{movie.releaseDate}</span>
+        {upcomingMovies.length === 0 ? (
+          <div className="flex items-center justify-center h-32 text-gray-400 text-lg text-center">
+        🎬 No hay próximos estrenos en este momento.
+        <br />
+        ¡Vuelve pronto para ver las novedades!
+      </div>
+        ) : (
+          <div
+            ref={scrollRef}
+            className="flex space-x-6 overflow-x-auto scrollbar-hide pb-4"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {upcomingMovies.map((movie) => (
+              <div
+                key={movie.id}
+                className="flex-shrink-0 w-[220px] bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-red-600/20 hover:shadow-xl"
+              >
+                <img
+                  src={movie.cartel || "/placeholder.svg"}
+                  alt={movie.titulo}
+                  className="w-full h-[300px] object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{movie.titulo}</h3>
+                  <div className="flex items-center text-gray-400 text-sm">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span>
+                      {new Date(movie.fechaEstreno).toLocaleDateString("es-ES", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

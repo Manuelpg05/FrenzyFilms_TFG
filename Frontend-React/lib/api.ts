@@ -47,4 +47,23 @@ export async function getPeliculasDestacadas() {
   }
 }
 
+export async function getProximosEstrenos() {
+  try {
+    const res = await fetch("http://localhost:8080/pelicula/cartelera", {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Error al obtener las películas en cartelera");
+    }
+
+    const data = await res.json();
+
+    return data.filter((pelicula: any) => pelicula.estado === Estado.PROXIMAMENTE);
+  } catch (error) {
+    console.error("Error en getProximosEstrenos:", error);
+    throw error;
+  }
+}
+
 

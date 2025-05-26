@@ -19,13 +19,13 @@ public abstract class Persona extends DomainEntity {
 
 	@NotBlank
 	@Email
-	@Column(unique = true)
 	private String email;
 
 	@NotBlank
 	@Pattern(regexp = "^[6-9]\\d{8}$")
 	private String telefono;
 
+	@Schema(hidden = true)
 	@URL
 	private String foto;
 
@@ -36,7 +36,7 @@ public abstract class Persona extends DomainEntity {
 	@NotBlank
 	private String password;
 
-		@Schema(hidden = true)
+	@Schema(hidden = true)
 	private Roles rol;
 
 	public Persona() {

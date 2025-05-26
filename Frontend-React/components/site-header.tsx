@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Film, UserIcon, LogIn, LogOut, Settings } from "lucide-react"
+import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield, Crown, BadgeCheck } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,12 +13,14 @@ import {
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
+import { getUserProfile } from "@/lib/api"
+import { Roles } from "@/lib/enums"
 
 type CinemaUser = {
   id: string
   name: string
-  email: string
-  avatar?: string
+  username: string
+  email?: string
   isAdmin?: boolean
 }
 
@@ -28,31 +30,38 @@ export default function SiteHeader() {
   const router = useRouter()
   const { theme } = useTheme()
 
-  // Simular verificación de autenticación
   useEffect(() => {
-    // Comprobar si hay un usuario en localStorage (simulación)
-    const checkUser = () => {
-      const storedUser = localStorage.getItem("cinema-user")
-      if (storedUser) {
-        setUser(JSON.parse(storedUser))
-        setIsLoggedIn(true)
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token")
+      if (token) {
+        try {
+          const profile = await getUserProfile(token)
+          setUser({
+            id: profile.id,
+            name: profile.nombre || profile.username,
+            username: profile.username,
+            email: profile.email,
+            isAdmin: profile.rol === Roles.ADMIN,
+          })
+          setIsLoggedIn(true)
+        } catch (error) {
+          console.error("Error al obtener perfil del usuario:", error)
+          setUser(null)
+          setIsLoggedIn(false)
+        }
       } else {
         setUser(null)
         setIsLoggedIn(false)
       }
     }
 
-    // Verificar al cargar el componente
-    checkUser()
+    fetchUser()
 
-    // Añadir un event listener para detectar cambios en localStorage
-    window.addEventListener("storage", checkUser)
-
-    // Verificar cada segundo (como fallback)
-    const interval = setInterval(checkUser, 1000)
+    window.addEventListener("storage", fetchUser)
+    const interval = setInterval(fetchUser, 1000)
 
     return () => {
-      window.removeEventListener("storage", checkUser)
+      window.removeEventListener("storage", fetchUser)
       clearInterval(interval)
     }
   }, [])
@@ -62,12 +71,11 @@ export default function SiteHeader() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("cinema-user")
+    localStorage.removeItem("token")
     setUser(null)
     setIsLoggedIn(false)
     router.push("/")
 
-    // Disparar un evento de storage para que otros componentes se enteren
     window.dispatchEvent(new Event("storage"))
   }
 
@@ -112,19 +120,13 @@ export default function SiteHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar || "/placeholder.svg"}
-                      alt={user.name}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
+                  {user.isAdmin ? (
+                    <>
+                      <UserCog className="h-5 w-5 text-gray-300 outline outline-1 outline-offset-8 outline-white rounded-full" />
+                      <Shield className="absolute -top-1 -right-1 h-3.5 w-3.5 text-blue-600 bg-black outline outline-1 outline-offset-0 outline-white rounded-full p-0.5 shadow" />
+                    </>
                   ) : (
-                    <UserIcon className="h-5 w-5 text-gray-300" />
-                  )}
-                  {user.isAdmin && (
-                    <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-1 py-0.5 rounded-md">
-                      Admin
-                    </span>
+                      <UserIcon className="h-5 w-5 text-gray-300 outline outline-1 outline-offset-8 outline-white rounded-full" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
@@ -133,9 +135,6 @@ export default function SiteHeader() {
                   <div className="flex flex-col space-y-1 leading-none">
                     <div className="flex items-center">
                       <p className="font-medium">{user.name}</p>
-                      {user.isAdmin && (
-                        <span className="ml-2 bg-blue-600 text-white text-xs px-1 py-0.5 rounded-md">Admin</span>
-                      )}
                     </div>
                     <p className="text-sm text-gray-400">{user.email}</p>
                   </div>

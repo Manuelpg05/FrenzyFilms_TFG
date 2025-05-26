@@ -2,15 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Star } from "lucide-react";
+import { ChevronRight, Star, Search, Loader } from "lucide-react";
 import Link from "next/link";
-import { getPeliculasDestacadas } from "@/lib/api";
+import { getPeliculasDestacadas, getUserProfile } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { Roles } from "@/lib/enums";
 
 export default function HeroSection() {
   const [destacadas, setDestacadas] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isScrollEnd, setIsScrollEnd] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +20,18 @@ export default function HeroSection() {
     getPeliculasDestacadas()
       .then((data) => setDestacadas(data))
       .catch((err) => console.error(err));
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      getUserProfile(token)
+        .then((profile) => {
+          setIsAdmin(profile.rol === Roles.ADMIN);
+        })
+        .catch((err) => {
+          console.error("Error al obtener el perfil del usuario:", err);
+          setIsAdmin(false);
+        });
+    }
   }, []);
 
   useEffect(() => {
@@ -46,6 +60,7 @@ export default function HeroSection() {
   if (destacadas.length === 0) {
     return (
       <div className="h-[70vh] flex items-center justify-center text-white text-lg">
+        <Loader className="h-10 w-10 text-red-600 animate-spin mr-2" />
         Cargando películas destacadas...
       </div>
     );
@@ -109,17 +124,28 @@ export default function HeroSection() {
                   {currentMovie.sinopsis}
                 </p>
               </div>
-              <div className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent pointer-events-none transition-opacity duration-300 ${isScrollEnd ? "opacity-0" : "opacity-100"
-                }`}></div>
+              <div
+                className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent pointer-events-none transition-opacity duration-300 ${isScrollEnd ? "opacity-0" : "opacity-100"
+                  }`}
+              ></div>
             </div>
 
             <div className="flex flex-wrap gap-4 mt-4">
-              <Button asChild size="lg" className="text-white bg-red-600 hover:bg-red-700">
-                <Link href={`/pelicula/${currentMovie.id}`}>
-                  Comprar Entradas
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
+              {isAdmin ? (
+                <Button asChild size="lg" className="text-white bg-blue-600 hover:bg-blue-700">
+                  <Link href={`/pelicula/${currentMovie.id}`}>
+                    Ver más
+                    <Search className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild size="lg" className="text-white bg-red-600 hover:bg-red-700">
+                  <Link href={`/pelicula/${currentMovie.id}`}>
+                    Comprar Entradas
+                    <ChevronRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              )}
               <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
                 Ver Trailer
               </Button>

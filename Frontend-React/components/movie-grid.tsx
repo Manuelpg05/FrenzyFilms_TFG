@@ -5,9 +5,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Star, Search, Calendar } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { getPeliculasCartelera } from "@/lib/api"
+import { getPeliculasCartelera, getUserProfile } from "@/lib/api"
 import '@/styles/globals.css';
-import { Estado } from "@/lib/enums"
+import { Estado, Roles } from "@/lib/enums"
 import { StarBurst } from "@/components/ui/StarBurst"
 
 export default function MovieGrid() {
@@ -29,10 +29,16 @@ export default function MovieGrid() {
       })
       .catch((error) => console.error(error))
 
-    const storedUser = localStorage.getItem("cinema-user")
-    if (storedUser) {
-      const user = JSON.parse(storedUser)
-      setIsAdmin(user.isAdmin === true)
+    const token = localStorage.getItem("token")
+    if (token) {
+      getUserProfile(token)
+        .then((profile) => {
+          setIsAdmin(profile.rol === Roles.ADMIN)
+        })
+        .catch((error) => {
+          console.error("Error al obtener el perfil del usuario:", error)
+          setIsAdmin(false)
+        })
     }
   }, [])
 
@@ -92,11 +98,10 @@ export default function MovieGrid() {
               </div>
             </div>
             <div className="absolute top-3 left-3 z-20 -translate-x-1/2 -translate-y-1/2">
-              {movie.estado === "ESTRENO" && (
+              {movie.estado === Estado.ESTRENO && (
                 <StarBurst color="text-red-600" />
               )}
             </div>
-
           </div>
           <div className="p-4">
             <h3 className="text-xl font-bold text-white mb-2">{movie.titulo}</h3>

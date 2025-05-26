@@ -1,10 +1,10 @@
 // lib/api.ts
 
-import { Estado } from "./estados";
+import { Estado } from "./enums";
 
 export async function getPeliculasCartelera() {
   try {
-    const res = await fetch("http://localhost:8080/pelicula/cartelera", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pelicula/cartelera`, {
       cache: "no-store",
     });
 
@@ -21,7 +21,7 @@ export async function getPeliculasCartelera() {
 
 export async function getPeliculasDestacadas() {
   try {
-    const res = await fetch("http://localhost:8080/pelicula/cartelera", { cache: "no-store" });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pelicula/cartelera`, { cache: "no-store" });
     if (!res.ok) throw new Error("Error al obtener películas destacadas");
     const data = await res.json();
 
@@ -49,7 +49,7 @@ export async function getPeliculasDestacadas() {
 
 export async function getProximosEstrenos() {
   try {
-    const res = await fetch("http://localhost:8080/pelicula/cartelera", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pelicula/cartelera`, {
       cache: "no-store",
     });
 
@@ -66,4 +66,43 @@ export async function getProximosEstrenos() {
   }
 }
 
+export async function loginUser(username: string, password: string) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      const errorMsg = errorData?.error || "Error al intentar iniciar sesión.";
+      throw new Error(errorMsg);
+    }
+
+    const data = await response.json();
+    return data.token;
+  } catch (error: any) {
+    if (error.message === "Failed to fetch") {
+      throw new Error("No se pudo conectar con el servidor. Verifica tu conexión.");
+    }
+    throw error;
+  }
+}
+
+export async function getUserProfile(token: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/userLogin`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('No se pudo obtener el perfil del usuario');
+  }
+
+  return await response.json();
+}
 

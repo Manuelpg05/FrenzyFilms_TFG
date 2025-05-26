@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Eye, EyeOff, Film } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -10,6 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
+import { loginUser, getUserProfile } from "@/lib/api"
+import { Roles } from "@/lib/enums"
+import '@/styles/globals.css';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -33,7 +35,6 @@ export default function LoginPage() {
       [name]: value,
     })
 
-    // Clear errors when typing
     if (errors[name as keyof typeof errors]) {
       setErrors({
         ...errors,
@@ -42,61 +43,63 @@ export default function LoginPage() {
     }
   }
 
-  // Modificar la función handleSubmit para asegurar que el evento de storage se dispare
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate form
     const newErrors = {
-      email: !formData.email ? "El email es requerido" : !/\S+@\S+\.\S+/.test(formData.email) ? "Email inválido" : "",
+      email: !formData.email
+        ? "El email es requerido"
+        : !/\S+@\S+\.\S+/.test(formData.email)
+        ? "Email inválido"
+        : "",
       password: !formData.password
         ? "La contraseña es requerida"
         : formData.password.length < 6
-          ? "La contraseña debe tener al menos 6 caracteres"
-          : "",
+        ? "La contraseña debe tener al menos 6 caracteres"
+        : "",
     }
 
     setErrors(newErrors)
 
-    // If no errors, submit form
     if (!newErrors.email && !newErrors.password) {
       setLoading(true)
 
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false)
+      loginUser(formData.email, formData.password)
+        .then(async (token) => {
+          const profile = await getUserProfile(token)
 
-        // Simular inicio de sesión exitoso
-        // Si el email contiene "admin", asignar rol de administrador
-        const isAdmin = formData.email.includes("admin")
+          const user = {
+            id: profile.id,
+            name: profile.nombre || profile.username || profile.email || "Usuario",
+            email: profile.username || profile.email || formData.email,
+            isAdmin: profile.rol === Roles.ADMIN,
+            token,
+          }
 
-        const user = {
-          id: "user-1",
-          name: isAdmin ? "Administrador" : "Usuario Demo",
-          email: formData.email,
-          isAdmin: isAdmin,
-        }
+          localStorage.setItem("cinema-user", JSON.stringify(user))
+          window.dispatchEvent(new Event("storage"))
 
-        // Guardar en localStorage
-        localStorage.setItem("cinema-user", JSON.stringify(user))
+          toast({
+            title: "¡Inicio de sesión exitoso!",
+            description: `Bienvenido a FrenzyFilms${user.isAdmin ? " como Administrador" : ""}.`,
+          })
 
-        // Disparar un evento de storage para que otros componentes se enteren
-        window.dispatchEvent(new Event("storage"))
-
-        toast({
-          title: "¡Inicio de sesión exitoso!",
-          description: `Bienvenido a CineMax${isAdmin ? " como Administrador" : ""}.`,
+          router.push("/")
         })
-
-        router.push("/")
-      }, 1500)
+        .catch((err) => {
+          toast({
+            title: "Error",
+            description: err.message,
+            variant: "destructive",
+          })
+        })
+        .finally(() => setLoading(false))
     }
   }
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-4 bg-black">
       <div className="w-full max-w-md space-y-8 relative">
-        {/* Decorative elements */}
         <div className="absolute -top-16 -left-16 w-32 h-32 bg-red-600 rounded-full opacity-20 blur-xl animate-pulse" />
         <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-red-600 rounded-full opacity-20 blur-xl animate-pulse" />
 
@@ -177,14 +180,7 @@ export default function LoginPage() {
                     fill="none"
                     viewBox="0 0 24 24"
                   >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path
                       className="opacity-75"
                       fill="currentColor"

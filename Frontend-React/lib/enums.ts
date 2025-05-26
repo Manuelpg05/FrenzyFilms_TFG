@@ -6,3 +6,8 @@ export enum Estado {
   PROXIMAMENTE = "PROXIMAMENTE",
   DESCATALOGADA = "DESCATALOGADA",
 }
+
+export enum Roles {
+  USER = "USER",
+  ADMIN = "ADMIN",
+}

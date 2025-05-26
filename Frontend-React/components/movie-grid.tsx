@@ -7,7 +7,7 @@ import { ShoppingCart, Star, Search, Calendar } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { getPeliculasCartelera } from "@/lib/api"
 import '@/styles/globals.css';
-import { Estado } from "@/lib/estados"
+import { Estado } from "@/lib/enums"
 import { StarBurst } from "@/components/ui/StarBurst"
 
 export default function MovieGrid() {

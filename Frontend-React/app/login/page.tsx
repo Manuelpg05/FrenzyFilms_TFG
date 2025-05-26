@@ -9,20 +9,19 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
-import { loginUser, getUserProfile } from "@/lib/api"
-import { Roles } from "@/lib/enums"
+import { loginUser } from "@/lib/api"
 import '@/styles/globals.css';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
     rememberMe: false,
   })
   const [errors, setErrors] = useState({
-    email: "",
+    username: "",
     password: "",
   })
   const router = useRouter()
@@ -47,11 +46,7 @@ export default function LoginPage() {
     e.preventDefault()
 
     const newErrors = {
-      email: !formData.email
-        ? "El email es requerido"
-        : !/\S+@\S+\.\S+/.test(formData.email)
-        ? "Email inválido"
-        : "",
+      username: !formData.username ? "El usuario es requerido" : "",
       password: !formData.password
         ? "La contraseña es requerida"
         : formData.password.length < 6
@@ -61,27 +56,17 @@ export default function LoginPage() {
 
     setErrors(newErrors)
 
-    if (!newErrors.email && !newErrors.password) {
+    if (!newErrors.username && !newErrors.password) {
       setLoading(true)
 
-      loginUser(formData.email, formData.password)
-        .then(async (token) => {
-          const profile = await getUserProfile(token)
-
-          const user = {
-            id: profile.id,
-            name: profile.nombre || profile.username || profile.email || "Usuario",
-            email: profile.username || profile.email || formData.email,
-            isAdmin: profile.rol === Roles.ADMIN,
-            token,
-          }
-
-          localStorage.setItem("cinema-user", JSON.stringify(user))
+      loginUser(formData.username, formData.password)
+        .then((token) => {
+          localStorage.setItem("token", token)
           window.dispatchEvent(new Event("storage"))
 
           toast({
             title: "¡Inicio de sesión exitoso!",
-            description: `Bienvenido a FrenzyFilms${user.isAdmin ? " como Administrador" : ""}.`,
+            description: "Bienvenido a FrenzyFilms.",
           })
 
           router.push("/")
@@ -114,19 +99,19 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-200">
-                Email
+              <Label htmlFor="username" className="text-gray-200">
+                Usuario
               </Label>
               <Input
-                id="email"
-                name="email"
+                id="username"
+                name="username"
                 type="text"
-                placeholder="tu@email.com"
-                value={formData.email}
+                placeholder="Introduce tu usuario"
+                value={formData.username}
                 onChange={handleChange}
-                className={`bg-gray-800 border-gray-700 text-white ${errors.email ? "border-red-500" : ""}`}
+                className={`bg-gray-800 border-gray-700 text-white ${errors.username ? "border-red-500" : ""}`}
               />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+              {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
             </div>
 
             <div className="space-y-2">

@@ -88,7 +88,7 @@ public class AdminService {
 		if (this.getAllAdmins().size() <= 0) {
 			Admin defaultAdmin = new Admin();
 			defaultAdmin.setUsername("admin");
-			defaultAdmin.setPassword(passwordEncoder.encode("admin"));
+			defaultAdmin.setPassword(passwordEncoder.encode("adminadmin"));
 			defaultAdmin.setNombre("admin");
 			defaultAdmin.setEmail("admin@default.com");
 			defaultAdmin.setTelefono("623456789");

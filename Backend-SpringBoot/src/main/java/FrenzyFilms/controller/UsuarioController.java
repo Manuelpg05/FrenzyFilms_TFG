@@ -25,7 +25,7 @@ public class UsuarioController {
     @GetMapping
     @Operation(summary = "Obtener todos los usuarios")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuarios obtenidos correctamente")
+            @ApiResponse(responseCode = "200", description = "Usuarios obtenidos correctamente")
     })
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
@@ -34,8 +34,8 @@ public class UsuarioController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener un usuario por ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id) {
         Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
@@ -48,9 +48,9 @@ public class UsuarioController {
 
     @PostMapping
     @Operation(summary = "Crear un nuevo usuario")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuario creado correctamente")
-    })
+    @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Administrador creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+            @ApiResponse(responseCode = "409", description = "El username ya está en uso") })
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario usuario) {
         Usuario creado = usuarioService.createUsuario(usuario);
         return ResponseEntity.ok(creado);
@@ -59,8 +59,8 @@ public class UsuarioController {
     @PutMapping
     @Operation(summary = "Actualizar los datos del usuario autenticado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuario actualizado correctamente"),
-        @ApiResponse(responseCode = "403", description = "No autorizado")
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado correctamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado")
     })
     public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuarioU) {
         Usuario actualizado = usuarioService.updateUsuario(usuarioU);
@@ -70,8 +70,8 @@ public class UsuarioController {
     @DeleteMapping
     @Operation(summary = "Eliminar la cuenta del usuario autenticado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuario eliminado correctamente"),
-        @ApiResponse(responseCode = "403", description = "No autorizado")
+            @ApiResponse(responseCode = "200", description = "Usuario eliminado correctamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado")
     })
     public ResponseEntity<Void> deleteUsuario() {
         usuarioService.deleteUsuario();

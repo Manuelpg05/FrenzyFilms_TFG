@@ -27,20 +27,12 @@ public class AdminController {
 
 	@PostMapping
 	@Operation(summary = "Crear un nuevo administrador")
-	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Administrador creado exitosamente"),
-			@ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-			@ApiResponse(responseCode = "409", description = "El username ya está en uso") })
-	public void saveSocio(@RequestBody Admin admin) {
-		if (adminService.findByUsername(admin.getUsername()).isPresent()) {
-			ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El username ya está en uso");
-		} else {
-			Admin a = adminService.saveAdmin(admin);
-			if (a != null) {
-				ResponseEntity.status(HttpStatus.CREATED).body("Administrador creado exitosamente");
-			} else {
-				ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se pudo crear el administrador");
-			}
-		}
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Administrador creado correctamente")
+	})
+	public ResponseEntity<Admin> saveAdmin(@RequestBody Admin admin) {
+		Admin creado = adminService.createAdmin(admin);
+		return ResponseEntity.ok(creado);
 	}
 
 	@PutMapping

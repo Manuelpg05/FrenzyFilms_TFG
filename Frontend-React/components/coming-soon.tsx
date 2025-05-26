@@ -35,14 +35,14 @@ export default function ComingSoon() {
   }, [])
 
   const scroll = (direction: "left" | "right") => {
-  if (scrollRef.current) {
-    const { clientWidth } = scrollRef.current
-    const scrollAmount = direction === "left" ? -clientWidth / 2 : clientWidth / 2
-    scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
+    if (scrollRef.current) {
+      const { clientWidth } = scrollRef.current
+      const scrollAmount = direction === "left" ? -clientWidth / 2 : clientWidth / 2
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
 
-    setTimeout(checkScrollButtons, 300)
+      setTimeout(checkScrollButtons, 300)
+    }
   }
-}
 
 
   return (
@@ -50,10 +50,16 @@ export default function ComingSoon() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-white">
-            <span className="bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">
-              Próximos Estrenos
+            <span className="bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent inline-flex items-center space-x-2">
+              <span>Próximos Estrenos</span>
+              <img
+                src="/images/frenzy-films-logo.png"
+                alt="FrenzyFilms Logo"
+                className="h-16 w-16 object-contain"
+              />
             </span>
           </h2>
+
           <div className="flex space-x-2">
             <Button
               variant="outline"

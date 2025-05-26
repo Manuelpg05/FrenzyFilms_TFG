@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Eye, EyeOff, Film } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +15,7 @@ import '@/styles/globals.css';
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [loadingAuth, setLoadingAuth] = useState(true)
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -26,6 +27,16 @@ export default function LoginPage() {
   })
   const router = useRouter()
   const { toast } = useToast()
+
+  // Control de acceso temprano
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      router.push("/")
+    } else {
+      setLoadingAuth(false) // Si no hay token, mostrar la página
+    }
+  }, [router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -80,6 +91,15 @@ export default function LoginPage() {
         })
         .finally(() => setLoading(false))
     }
+  }
+
+  // Mostrar un spinner mientras se verifica el token
+  if (loadingAuth) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <Film className="h-10 w-10 text-red-600 animate-spin" />
+      </div>
+    )
   }
 
   return (

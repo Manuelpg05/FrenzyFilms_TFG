@@ -9,10 +9,13 @@ export default function Home() {
     <main className="min-h-screen bg-black">
       <HeroSection />
       <div className="container mx-auto py-16 px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-white text-center">
-          <span className="bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">
-            Cartelera Actual
-          </span>
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-white">
+          <div className="flex items-center justify-center space-x-2">
+            <span className="bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">
+              Cartelera FrenzyFilms
+            </span>
+            <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-16 w-16 object-contain" />
+          </div>
         </h2>
         <Suspense fallback={<MovieGridSkeleton />}>
           <MovieGrid />

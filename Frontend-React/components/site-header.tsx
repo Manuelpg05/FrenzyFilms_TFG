@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield, Crown, BadgeCheck } from "lucide-react"
+import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,9 +74,9 @@ export default function SiteHeader() {
     localStorage.removeItem("token")
     setUser(null)
     setIsLoggedIn(false)
-    router.push("/")
 
     window.dispatchEvent(new Event("storage"))
+    window.location.href = "/"
   }
 
   return (
@@ -84,7 +84,7 @@ export default function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-8 w-8 object-contain" />
+            <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-14 w-14 object-contain" />
             <span className="text-lg font-bold text-white">FrenzyFilms</span>
           </Link>
         </div>
@@ -105,17 +105,6 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center space-x-4">
-          {isLoggedIn && user?.isAdmin && (
-            <Button
-              onClick={() => router.push("/admin/peliculas")}
-              variant="outline"
-              size="sm"
-              className="border-blue-600 text-blue-600 mr-2"
-            >
-              <Film className="mr-2 h-4 w-4" />
-              Gestionar Películas
-            </Button>
-          )}
           {isLoggedIn && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -126,26 +115,43 @@ export default function SiteHeader() {
                       <Shield className="absolute -top-1 -right-1 h-3.5 w-3.5 text-blue-600 bg-black outline outline-1 outline-offset-0 outline-white rounded-full p-0.5 shadow" />
                     </>
                   ) : (
-                      <UserIcon className="h-5 w-5 text-gray-300 outline outline-1 outline-offset-8 outline-white rounded-full" />
+                    <UserIcon className="h-5 w-5 text-gray-300 outline outline-1 outline-offset-8 outline-white rounded-full" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-gray-900 border-gray-800 text-white">
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
-                    <div className="flex items-center">
-                      <p className="font-medium">{user.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium truncate max-w-[140px]">{user.name}</p>
+                      {user.isAdmin && (
+                        <span className="bg-blue-600 text-white text-xs px-1 py-0.5 rounded-md whitespace-nowrap">
+                          Admin
+                        </span>
+                      )}
                     </div>
+
                     <p className="text-sm text-gray-400">{user.email}</p>
                   </div>
                 </div>
                 <DropdownMenuSeparator className="bg-gray-800" />
-                <DropdownMenuItem
-                  className="cursor-pointer hover:bg-gray-800"
-                  onClick={() => router.push("/perfil/entradas")}
-                >
-                  Mis Entradas
-                </DropdownMenuItem>
+                {!user.isAdmin && (
+                  <DropdownMenuItem
+                    className="cursor-pointer hover:bg-gray-800"
+                    onClick={() => router.push("/perfil/entradas")}
+                  >
+                    Mis Entradas
+                  </DropdownMenuItem>
+                )}
+                {user.isAdmin && (
+                  <DropdownMenuItem
+                    className="cursor-pointer hover:bg-gray-800"
+                    onClick={() => router.push("/admin/peliculas")}
+                  >
+                    <Film className="mr-2 h-4 w-4" />
+                    Gestionar Películas
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-800"
                   onClick={() => router.push("/perfil/ajustes")}

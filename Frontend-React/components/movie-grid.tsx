@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, Star, Search } from "lucide-react"
+import { ShoppingCart, Star, Search, Calendar } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { getPeliculasCartelera } from "@/lib/api"
 import '@/styles/globals.css';
@@ -111,7 +111,14 @@ export default function MovieGrid() {
             <p className="text-gray-400 text-sm mb-2">
               {movie.duracion > 0 ? `${movie.duracion} min` : "Duración no disponible"}
             </p>
-            <p className="text-gray-400 text-xs">Estreno: {movie.fechaEstreno}</p>
+            <p className="text-gray-400 text-xs flex items-center">
+              <Calendar className="h-4 w-4 mr-2" />
+              {new Date(movie.fechaEstreno).toLocaleDateString("es-ES", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </p>
           </div>
         </div>
       ))}

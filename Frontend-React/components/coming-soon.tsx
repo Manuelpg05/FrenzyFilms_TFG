@@ -20,8 +20,8 @@ export default function ComingSoon() {
   const checkScrollButtons = () => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-      setCanScrollLeft(scrollLeft > 0)
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
+      setCanScrollLeft(scrollLeft > 1)
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5)
     }
   }
 
@@ -35,12 +35,15 @@ export default function ComingSoon() {
   }, [])
 
   const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const { clientWidth } = scrollRef.current
-      const scrollAmount = direction === "left" ? -clientWidth / 2 : clientWidth / 2
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
-    }
+  if (scrollRef.current) {
+    const { clientWidth } = scrollRef.current
+    const scrollAmount = direction === "left" ? -clientWidth / 2 : clientWidth / 2
+    scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
+
+    setTimeout(checkScrollButtons, 300)
   }
+}
+
 
   return (
     <div className="py-16 bg-gradient-to-b from-black to-gray-900">
@@ -75,10 +78,10 @@ export default function ComingSoon() {
 
         {upcomingMovies.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-gray-400 text-lg text-center">
-        🎬 No hay próximos estrenos en este momento.
-        <br />
-        ¡Vuelve pronto para ver las novedades!
-      </div>
+            🎬 No hay próximos estrenos en este momento.
+            <br />
+            ¡Vuelve pronto para ver las novedades!
+          </div>
         ) : (
           <div
             ref={scrollRef}

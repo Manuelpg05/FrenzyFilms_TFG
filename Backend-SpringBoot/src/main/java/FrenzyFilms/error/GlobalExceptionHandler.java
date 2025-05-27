@@ -79,6 +79,10 @@ public class GlobalExceptionHandler {
             response.put("username", "Este nombre de usuario ya está en uso.");
         } else if (rawMessage != null && rawMessage.contains("usuario_email_key")) {
             response.put("email", "Este email ya está registrado.");
+        } else if (rawMessage != null && rawMessage.contains("admin_username_key")) {
+            response.put("username", "Este nombre de usuario ya está en uso.");
+        } else if (rawMessage != null && rawMessage.contains("admin_email_key")) {
+            response.put("email", "Este email ya está registrado.");
         } else if (rawMessage != null && rawMessage.contains("sala_num_sala_key")) {
             response.put("numSala", "Este numero de sala ya está registrado.");
         } else if (rawMessage != null && rawMessage.contains("pelicula_tmdb_id_key")) {

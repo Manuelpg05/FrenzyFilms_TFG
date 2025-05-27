@@ -19,6 +19,7 @@ public abstract class Persona extends DomainEntity {
 
 	@NotBlank
 	@Email
+	@Column(unique = true)
 	private String email;
 
 	@NotBlank

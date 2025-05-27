@@ -13,7 +13,9 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "FrenzyFilms - Un cine de locos",
   description: "Compra entradas para las mejores películas",
-    generator: 'v0.dev'
+  icons: {
+    icon: "/images/frenzy-films-logo.ico",
+  },
 }
 
 export default function RootLayout({

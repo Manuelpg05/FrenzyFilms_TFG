@@ -30,6 +30,8 @@ public class Sesion extends DomainEntity {
 	@Min(0)
 	private double precioEntrada;
 
+	private Formato formato;
+
 	@Schema(hidden = true)
 	@OneToMany
 	@JoinColumn(name = "sesion_id")
@@ -61,6 +63,14 @@ public class Sesion extends DomainEntity {
 
 	public void setPrecioEntrada(double precioEntrada) {
 		this.precioEntrada = precioEntrada;
+	}
+
+	public Formato getFormato() {
+		return formato;
+	}
+
+	public void setFormato(Formato formato) {
+		this.formato = formato;
 	}
 
 	public Set<Entrada> getEntradas() {

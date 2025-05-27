@@ -59,6 +59,16 @@ export async function getPeliculaById(id: string) {
   return res.json();
 }
 
+// ==================== SESIONES ====================
+
+export async function getSesionesFuturasPorPelicula(id: string) {
+  const res = await fetch(`${API_URL}/sesion/futuras/pelicula/${id}`, { cache: "no-store" })
+  if (!res.ok) {
+    throw new Error(`Error al obtener las sesiones de la película ${id}`)
+  }
+  return res.json()
+}
+
 // ==================== USUARIOS Y AUTENTICACIÓN ====================
 
 export async function loginUser(username: string, password: string) {

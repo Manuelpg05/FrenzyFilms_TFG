@@ -130,7 +130,6 @@ export default function SiteHeader() {
                         </span>
                       )}
                     </div>
-
                     <p className="text-sm text-gray-400">{user.email}</p>
                   </div>
                 </div>
@@ -144,13 +143,23 @@ export default function SiteHeader() {
                   </DropdownMenuItem>
                 )}
                 {user.isAdmin && (
-                  <DropdownMenuItem
-                    className="cursor-pointer hover:bg-gray-800"
-                    onClick={() => router.push("/admin/peliculas")}
-                  >
-                    <Film className="mr-2 h-4 w-4" />
-                    Gestionar Películas
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem
+                      className="cursor-pointer hover:bg-gray-800"
+                      onClick={() => router.push("/admin/peliculas")}
+                    >
+                      <Film className="mr-2 h-4 w-4" />
+                      Gestionar Películas
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      className="cursor-pointer hover:bg-gray-800"
+                      onClick={() => router.push("/registro/admin")}
+                    >
+                      <UserCog className="mr-2 h-4 w-4" />
+                      Registrar otro Admin
+                    </DropdownMenuItem>
+                  </>
                 )}
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-800"

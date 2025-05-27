@@ -2,11 +2,10 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, Film } from "lucide-react"
+import { Eye, EyeOff, Film, Loader } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 import { loginUser } from "@/lib/api"
@@ -19,7 +18,6 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    rememberMe: false,
   })
   const [errors, setErrors] = useState({
     username: "",
@@ -28,13 +26,12 @@ export default function LoginPage() {
   const router = useRouter()
   const { toast } = useToast()
 
-  // Control de acceso temprano
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (token) {
       router.push("/")
     } else {
-      setLoadingAuth(false) // Si no hay token, mostrar la página
+      setLoadingAuth(false)
     }
   }, [router])
 
@@ -93,17 +90,16 @@ export default function LoginPage() {
     }
   }
 
-  // Mostrar un spinner mientras se verifica el token
   if (loadingAuth) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
-        <Film className="h-10 w-10 text-red-600 animate-spin" />
+        <Loader className="h-10 w-10 text-red-600 animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-4 bg-black">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center p-4 bg-black">
       <div className="w-full max-w-md space-y-8 relative">
         <div className="absolute -top-16 -left-16 w-32 h-32 bg-red-600 rounded-full opacity-20 blur-xl animate-pulse" />
         <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-red-600 rounded-full opacity-20 blur-xl animate-pulse" />
@@ -159,18 +155,7 @@ export default function LoginPage() {
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  checked={formData.rememberMe}
-                  onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: checked as boolean })}
-                  className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
-                />
-                <Label htmlFor="remember" className="text-sm text-gray-300">
-                  Recordarme
-                </Label>
-              </div>
+            <div className="flex items-center justify-end">
               <a href="#" className="text-sm text-red-400 hover:text-red-300">
                 ¿Olvidaste tu contraseña?
               </a>
@@ -200,9 +185,9 @@ export default function LoginPage() {
             </Button>
 
             <div className="flex items-center justify-center space-x-2 pt-4">
-              <span className="text-gray-400 text-sm">
+              <span className="text-sm text-gray-400">
                 ¿No tienes cuenta?{" "}
-                <a href="#" className="text-red-400 hover:text-red-300 font-medium">
+                <a href="/registro/usuario" className="text-red-400 hover:text-red-300 font-medium">
                   Regístrate
                 </a>
               </span>

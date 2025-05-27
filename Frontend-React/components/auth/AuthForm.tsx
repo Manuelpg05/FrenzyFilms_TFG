@@ -111,8 +111,8 @@ export default function AuthForm({
 
       <div className="relative z-10 bg-gray-900 backdrop-blur-sm border border-gray-800 p-8 rounded-2xl shadow-2xl">
         <div className="flex flex-col items-center space-y-2 mb-8">
-          <div className="bg-red-600 p-3 rounded-full">
-            <Film className="h-8 w-8 text-white" />
+          <div className="bg-gray-800 p-3 rounded-full">
+            <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-16 w-16 object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-white">{title}</h1>
           <p className="text-gray-400 text-sm">{description}</p>

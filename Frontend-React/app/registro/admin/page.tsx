@@ -62,7 +62,7 @@ export default function AdminRegisterPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-black p-4">
+    <main className="overflow-x-hidden min-h-screen flex flex-col items-center justify-center bg-black p-4">
       <AuthForm
         title="Registrar a otro Admin"
         description="Crea una nueva cuenta de administrador"

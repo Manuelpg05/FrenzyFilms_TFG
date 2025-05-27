@@ -99,7 +99,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center p-4 bg-black">
+    <div className="overflow-x-hidden flex min-h-screen w-full flex-col items-center justify-center p-4 bg-black">
       <div className="w-full max-w-md space-y-8 relative">
         <div className="absolute -top-16 -left-16 w-32 h-32 bg-red-600 rounded-full opacity-20 blur-xl animate-pulse" />
         <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-red-600 rounded-full opacity-20 blur-xl animate-pulse" />

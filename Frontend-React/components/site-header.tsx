@@ -56,13 +56,10 @@ export default function SiteHeader() {
     }
 
     fetchUser()
-
     window.addEventListener("storage", fetchUser)
-    const interval = setInterval(fetchUser, 1000)
 
     return () => {
       window.removeEventListener("storage", fetchUser)
-      clearInterval(interval)
     }
   }, [])
 

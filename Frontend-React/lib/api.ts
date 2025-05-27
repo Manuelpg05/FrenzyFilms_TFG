@@ -2,7 +2,7 @@ import { Estado } from "./enums"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-// ==================== PELÍCULAS ====================
+// ==================== CARTELERA ====================
 
 export async function getPeliculasCartelera() {
   try {
@@ -47,6 +47,16 @@ export async function getProximosEstrenos() {
     console.error("Error en getProximosEstrenos:", error)
     throw error
   }
+}
+
+// ==================== PELÍCULAS ====================
+
+export async function getPeliculaById(id: string) {
+  const res = await fetch(`${API_URL}/pelicula/${id}`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Error al obtener la película con ID ${id}`);
+  }
+  return res.json();
 }
 
 // ==================== USUARIOS Y AUTENTICACIÓN ====================
@@ -108,7 +118,7 @@ export async function createAdmin(data: { username: string; password: string; em
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       if (errorData && typeof errorData === 'object') {
-        throw errorData; // 🔥 Devuelve objeto de errores como {username: "...", email: "..."}
+        throw errorData;
       }
       const errorMsg = errorData || "Error al registrar el administrador.";
       throw new Error(errorMsg);

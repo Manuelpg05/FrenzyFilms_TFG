@@ -2,6 +2,18 @@ import { Estado } from "./enums"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
+// ==================== TMDB ====================
+
+export async function searchPeliculasTmdb(titulo: string, pagina: number = 1) {
+  const response = await fetch(`${API_URL}/tmdb/buscar?titulo=${titulo}&pagina=${pagina}`)
+
+  if (!response.ok) {
+    throw new Error("Error al buscar películas en TMDb")
+  }
+
+  return await response.json()
+}
+
 // ==================== CARTELERA ====================
 
 export async function getPeliculasCartelera() {
@@ -49,7 +61,42 @@ export async function getProximosEstrenos() {
   }
 }
 
-// ==================== PELÍCULAS ====================
+// ==================== PELICULAS ====================
+export async function importarPeliculaDesdeTmdb(idTmdb: number, token: string) {
+  const response = await fetch(`${API_URL}/pelicula/importar/${idTmdb}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    let errorMessage = "Error al importar la película."
+
+    try {
+      const contentType = response.headers.get("content-type")
+      if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json()
+        if (typeof errorData === "object" && errorData !== null) {
+          const firstKey = Object.keys(errorData)[0]
+          if (firstKey) {
+            errorMessage = errorData[firstKey]
+          }
+        }
+      } else {
+        const fallbackText = await response.text()
+        if (fallbackText) errorMessage = fallbackText
+      }
+    } catch (err) {
+      errorMessage = "Error inesperado al procesar la respuesta del servidor."
+    }
+
+    throw new Error(errorMessage)
+  }
+
+  return await response.json()
+}
+
 
 export async function getPeliculaById(id: string) {
   const res = await fetch(`${API_URL}/pelicula/${id}`, { cache: "no-store" });
@@ -74,6 +121,20 @@ export async function getPeliculaBySesionId(idSesion: number, token: string) {
   }
 
   return res.json();
+}
+
+export async function getPeliculas(token: string) {
+  const response = await fetch(`${API_URL}/pelicula`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener el listado de películas")
+  }
+
+  return await response.json()
 }
 
 

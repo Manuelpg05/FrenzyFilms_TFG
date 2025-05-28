@@ -1,7 +1,49 @@
+"use client"
+
 import Link from "next/link"
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { getUserProfile } from "@/lib/api"
+import { Roles } from "@/lib/enums"
 
 export default function SiteFooter() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token")
+      if (token) {
+        try {
+          const profile = await getUserProfile(token)
+          setUser({
+            id: profile.id,
+            name: profile.nombre || profile.username,
+            username: profile.username,
+            email: profile.email,
+            isAdmin: profile.rol === Roles.ADMIN,
+          })
+          setIsLoggedIn(true)
+        } catch (error) {
+          console.error("Error al obtener perfil del usuario:", error)
+          setUser(null)
+          setIsLoggedIn(false)
+        }
+      } else {
+        setUser(null)
+        setIsLoggedIn(false)
+      }
+    }
+
+    fetchUser()
+    window.addEventListener("storage", fetchUser)
+
+    return () => {
+      window.removeEventListener("storage", fetchUser)
+    }
+  }, [])
+
   return (
     <footer className="bg-gray-950 text-gray-300">
       <div className="container mx-auto px-4 py-12">
@@ -14,20 +56,6 @@ export default function SiteFooter() {
             <p className="text-sm text-gray-400 mb-4">
               Tu destino cinematográfico preferido, con las mejores películas, la mejor experiencia y el mejor servicio.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <Youtube className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           <div>
@@ -38,21 +66,38 @@ export default function SiteFooter() {
                   Cartelera
                 </Link>
               </li>
-              <li>
-                <Link href="/promociones" className="text-gray-400 hover:text-white">
-                  Promociones
-                </Link>
-              </li>
-              <li>
-                <Link href="/cines" className="text-gray-400 hover:text-white">
-                  Nuestros Cines
-                </Link>
-              </li>
-              <li>
-                <Link href="/contacto" className="text-gray-400 hover:text-white">
-                  Contacto
-                </Link>
-              </li>
+
+              {isLoggedIn && user ? (
+                <>
+                  {!user.isAdmin ? (
+                    <>
+                      <li>
+                        <Link href="/perfil?seccion=entradas" className="text-gray-400 hover:text-white">
+                          Mis Entradas
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/perfil?seccion=historial" className="text-gray-400 hover:text-white">
+                          Historial
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        <Link href="/admin/pendiente1" className="text-gray-400 hover:text-white">
+                          Admin Panel 1
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/admin/pendiente2" className="text-gray-400 hover:text-white">
+                          Admin Panel 2
+                        </Link>
+                      </li>
+                    </>
+                  )}
+                </>
+              ) : null}
             </ul>
           </div>
 
@@ -86,19 +131,22 @@ export default function SiteFooter() {
             <h3 className="text-lg font-bold text-white mb-4">Contacto</h3>
             <ul className="space-y-2">
               <li className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2 text-red-600" />
-                <span>Av. del Cine 123, Ciudad</span>
+                <MapPin className="shrink-0 h-4 w-4 mr-2 text-red-600" />
+                <span>Av. del Cine 123, Écija</span>
               </li>
               <li className="flex items-center">
-                <Phone className="h-4 w-4 mr-2 text-red-600" />
+                <Phone className="shrink-0 h-4 w-4 mr-2 text-red-600" />
                 <span>+34 912 345 678</span>
               </li>
               <li className="flex items-center">
-                <Mail className="h-4 w-4 mr-2 text-red-600" />
-                <span>info@cinemax.com</span>
+                <Mail className="shrink-0 h-4 w-4 mr-2 text-red-600" />
+                <span className="truncate max-w-[200px] sm:max-w-full break-all">
+                  noreply.frenzyfilms@gmail.com
+                </span>
               </li>
             </ul>
           </div>
+
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">

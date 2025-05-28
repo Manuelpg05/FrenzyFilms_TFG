@@ -319,7 +319,6 @@ export async function deleteUsuario(token: string) {
     let errorMsg = "Error al eliminar la cuenta.";
 
     if (response.status === 409) {
-      // Caso específico para 409 Conflict
       errorMsg = "No puedes eliminar tu cuenta si tienes entradas en sesiones futuras.";
     } else {
       try {

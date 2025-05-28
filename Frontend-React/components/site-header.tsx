@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield } from "lucide-react"
+import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield, Ticket } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -90,15 +90,30 @@ export default function SiteHeader() {
           <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white">
             Cartelera
           </Link>
-          <Link href="/promociones" className="text-sm font-medium text-gray-300 hover:text-white">
-            Promociones
-          </Link>
-          <Link href="/cines" className="text-sm font-medium text-gray-300 hover:text-white">
-            Nuestros Cines
-          </Link>
-          <Link href="/contacto" className="text-sm font-medium text-gray-300 hover:text-white">
-            Contacto
-          </Link>
+
+          {isLoggedIn && user ? (
+            <>
+              {!user.isAdmin ? (
+                <>
+                  <Link href="/perfil?seccion=entradas" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Mis Entradas
+                  </Link>
+                  <Link href="/perfil?seccion=historial" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Historial
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/admin/pendiente1" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Admin Panel 1
+                  </Link>
+                  <Link href="/admin/pendiente2" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Admin Panel 2
+                  </Link>
+                </>
+              )}
+            </>
+          ) : null}
         </nav>
 
         <div className="flex items-center space-x-4">
@@ -132,38 +147,47 @@ export default function SiteHeader() {
                 </div>
                 <DropdownMenuSeparator className="bg-gray-800" />
                 {!user.isAdmin && (
-                  <DropdownMenuItem
-                    className="cursor-pointer hover:bg-gray-800"
-                    onClick={() => router.push("/perfil/entradas")}
-                  >
-                    Mis Entradas
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem
+                      className="cursor-pointer hover:bg-gray-800"
+                      onClick={() => router.push("/perfil?seccion=entradas")}
+                    >
+                      <Ticket className="mr-2 h-4 w-4" />
+                      Mis Entradas
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="cursor-pointer hover:bg-gray-800"
+                      onClick={() => router.push("/perfil?seccion=historial")}
+                    >
+                      <Film className="mr-2 h-4 w-4" />
+                      Historial
+                    </DropdownMenuItem>
+                  </>
                 )}
                 {user.isAdmin && (
                   <>
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gray-800"
-                      onClick={() => router.push("/admin/peliculas")}
+                      onClick={() => router.push("/admin/pendiente1")}
                     >
                       <Film className="mr-2 h-4 w-4" />
-                      Gestionar Películas
+                      Admin Panel 1
                     </DropdownMenuItem>
-
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gray-800"
-                      onClick={() => router.push("/registro/admin")}
+                      onClick={() => router.push("/admin/pendiente2")}
                     >
-                      <UserCog className="mr-2 h-4 w-4" />
-                      Registrar otro Admin
+                      <Settings className="mr-2 h-4 w-4" />
+                      Admin Panel 2
                     </DropdownMenuItem>
                   </>
                 )}
                 <DropdownMenuItem
                   className="cursor-pointer hover:bg-gray-800"
-                  onClick={() => router.push("/perfil/ajustes")}
+                  onClick={() => router.push("/perfil")}
                 >
                   <Settings className="mr-2 h-4 w-4" />
-                  <span>Ajustes</span>
+                  <span>Mi Perfil</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-800" />
                 <DropdownMenuItem className="cursor-pointer hover:bg-gray-800" onClick={handleLogout}>

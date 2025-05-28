@@ -279,6 +279,12 @@ export default function SeatsPage({ id }: { id: string }) {
                                         </div>
                                     );
                                 })}
+
+                            <div className="relative">
+                                <div className="h-8 bg-white w-full mx-auto rounded-sm shadow-lg flex items-center justify-center text-black font-bold">
+                                    PANTALLA
+                                </div>
+                            </div>
                         </div>
                     </div>
 

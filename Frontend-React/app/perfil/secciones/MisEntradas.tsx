@@ -31,7 +31,7 @@ type EntradaDetallada = {
   cartelPelicula: string
 }
 
-export default function MisEntradas() {
+export default function Entradas({ modo = "futuras" }: { modo?: "futuras" | "historial" }) {
   const [entradas, setEntradas] = useState<EntradaDetallada[]>([])
   const [loading, setLoading] = useState(true)
   const [posterCache, setPosterCache] = useState<Map<string, string>>(new Map())
@@ -53,27 +53,31 @@ export default function MisEntradas() {
 
         const data: EntradaDetallada[] = await getEntradasUsuarioDetallado(token)
 
+        let entradasFiltradas = data
         const ahora = new Date()
-        const futuras = data.filter((entrada) => {
-          const fechaHoraSesion = new Date(`${entrada.fecha}T${entrada.horaInicio}`)
-          return fechaHoraSesion > ahora
-        })
 
-        futuras.sort((a, b) => {
+        if (modo === "futuras") {
+          entradasFiltradas = data.filter((entrada) => {
+            const fechaHoraSesion = new Date(`${entrada.fecha}T${entrada.horaInicio}`)
+            return fechaHoraSesion > ahora
+          })
+        }
+
+        entradasFiltradas.sort((a, b) => {
           const fechaHoraA = new Date(`${a.fecha}T${a.horaInicio}`).getTime()
           const fechaHoraB = new Date(`${b.fecha}T${b.horaInicio}`).getTime()
           return fechaHoraA - fechaHoraB
         })
 
         const cache = new Map<string, string>()
-        futuras.forEach((entrada) => {
+        entradasFiltradas.forEach((entrada) => {
           if (!cache.has(entrada.tituloPelicula)) {
             cache.set(entrada.tituloPelicula, entrada.cartelPelicula)
           }
         })
 
         setPosterCache(cache)
-        setEntradas(futuras)
+        setEntradas(entradasFiltradas)
       } catch (error: any) {
         toast({
           title: "Error al cargar entradas",
@@ -85,7 +89,7 @@ export default function MisEntradas() {
     }
 
     fetchData()
-  }, [])
+  }, [modo])
 
   const getPosterForMovie = (tituloPelicula: string) => {
     return posterCache.get(tituloPelicula) || ""
@@ -110,7 +114,6 @@ export default function MisEntradas() {
     setTicketToDelete(entradaId)
     setIsDeleteDialogOpen(true)
   }
-
 
   const confirmDelete = async () => {
     if (ticketToDelete !== null) {
@@ -143,76 +146,86 @@ export default function MisEntradas() {
         </div>
       ) : entradas.length > 0 ? (
         <div className="flex flex-col items-center space-y-6">
-          {entradas.map((entrada) => (
-            <Card
-              key={entrada.idEntrada}
-              className="bg-gray-900 border-gray-800 w-full max-w-xl mx-auto p-4"
-            >
-              <div className="flex items-center gap-4">
-                {/* Columna izquierda: cartel */}
-                <div className="flex-shrink-0">
-                  <img
-                    src={getPosterForMovie(entrada.tituloPelicula)}
-                    alt={entrada.tituloPelicula}
-                    className="w-24 h-36 object-cover rounded"
-                  />
-                </div>
+          {entradas.map((entrada) => {
+            const ahora = new Date()
+            const fechaHoraSesion = new Date(`${entrada.fecha}T${entrada.horaInicio}`)
+            const tiempoRestante = (fechaHoraSesion.getTime() - ahora.getTime()) / (1000 * 60)
+            const puedeEliminar = tiempoRestante >= 60
 
-                {/* Línea de separación */}
-                <div className="h-36 w-px bg-gray-700" />
+            return (
+              <Card
+                key={entrada.idEntrada}
+                className="bg-gray-900 border-gray-800 w-full max-w-xl mx-auto p-4"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={getPosterForMovie(entrada.tituloPelicula)}
+                      alt={entrada.tituloPelicula}
+                      className="w-24 h-36 object-cover rounded"
+                    />
+                  </div>
 
-                {/* Columna derecha: datos */}
-                <div className="flex-1 flex flex-col justify-between text-gray-300 text-sm">
-                  <div>
-                    <h2 className="text-lg font-bold text-white">{entrada.tituloPelicula}</h2>
-                    <p className="text-gray-400 text-xs mb-2">{entrada.formato}</p>
+                  <div className="h-36 w-px bg-gray-700" />
 
-                    <div className="flex items-center mb-1">
-                      <Calendar className="h-4 w-4 mr-2 text-red-600" />
-                      <span>
-                        {new Date(`${entrada.fecha}T${entrada.horaInicio}`).toLocaleDateString("es-ES", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                  <div className="flex-1 flex flex-col justify-between text-gray-300 text-sm">
+                    <div>
+                      <h2 className="text-lg font-bold text-white">{entrada.tituloPelicula}</h2>
+                      <p className="text-gray-400 text-xs mb-2">{entrada.formato}</p>
+
+                      <div className="flex items-center mb-1">
+                        <Calendar className="h-4 w-4 mr-2 text-red-600" />
+                        <span>
+                          {fechaHoraSesion.toLocaleDateString("es-ES", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center mb-1">
+                        <Clock className="h-4 w-4 mr-2 text-red-600" />
+                        <span>
+                          {fechaHoraSesion.toLocaleTimeString("es-ES", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center mb-1">
+                        <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                        <span>Sala {entrada.numSala}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Film className="h-4 w-4 mr-2 text-red-600" />
+                        <span>Fila {entrada.numFila}, Asiento {entrada.numAsiento}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-800 mt-2">
+                      <span className="text-xs text-gray-400">
+                        Precio: {entrada.precioEntrada.toFixed(2)}€
                       </span>
+                      {puedeEliminar && modo === "futuras" && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteClick(entrada.idEntrada)}
+                          className="text-gray-400 hover:text-red-500 hover:bg-transparent"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
-                    <div className="flex items-center mb-1">
-                      <Clock className="h-4 w-4 mr-2 text-red-600" />
-                      {new Date(`${entrada.fecha}T${entrada.horaInicio}`).toLocaleTimeString("es-ES", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </div>
-                    <div className="flex items-center mb-1">
-                      <MapPin className="h-4 w-4 mr-2 text-red-600" />
-                      <span>Sala {entrada.numSala}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Film className="h-4 w-4 mr-2 text-red-600" />
-                      <span>Fila {entrada.numFila}, Asiento {entrada.numAsiento}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-800 mt-2">
-                    <span className="text-xs text-gray-400">Precio: {entrada.precioEntrada.toFixed(2)}€</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteClick(entrada.idEntrada)}
-                      className="text-gray-400 hover:text-red-500 hover:bg-transparent"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            )
+          })}
         </div>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-xl text-gray-400 mb-4">No tienes entradas para sesiones futuras</h3>
+          <h3 className="text-xl text-gray-400 mb-4">No tienes entradas para mostrar</h3>
           <Button asChild className="bg-red-600 hover:bg-red-700">
             <Link href="/">Ver cartelera</Link>
           </Button>

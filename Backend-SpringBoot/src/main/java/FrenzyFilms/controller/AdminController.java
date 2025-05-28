@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import FrenzyFilms.entity.Admin;
-import FrenzyFilms.entity.Usuario;
 import FrenzyFilms.service.AdminService;
 
 @RestController

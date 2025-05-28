@@ -62,6 +62,7 @@ public class SecurityConfiguration {
             // SALA
             .requestMatchers(HttpMethod.GET, "/sala").hasAuthority("ADMIN")
             .requestMatchers(HttpMethod.GET, "/sala/{id}").hasAuthority("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/sala/sesion/{idSesion}").permitAll()
             .requestMatchers(HttpMethod.POST, "/sala").hasAuthority("ADMIN")
             .requestMatchers(HttpMethod.PUT, "/sala/{id}").hasAuthority("ADMIN")
             .requestMatchers(HttpMethod.DELETE, "/sala/{id}").hasAuthority("ADMIN")

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import FrenzyFilms.entity.Admin;
 import FrenzyFilms.entity.Roles;
+import FrenzyFilms.entity.Usuario;
 import FrenzyFilms.repository.AdminRepository;
 import FrenzyFilms.security.JWTUtils;
 
@@ -48,14 +49,23 @@ public class AdminService {
 		Admin admin = JWTUtils.userLogin();
 
 		if (admin == null) {
-			throw new AccessDeniedException("Debes estar autenticado como administrador para actualizar tus datos.");
+			throw new AccessDeniedException("Debes estar autenticado para actualizar tus datos.");
 		}
 
 		admin.setNombre(adminU.getNombre());
 		admin.setEmail(adminU.getEmail());
 		admin.setTelefono(adminU.getTelefono());
-		admin.setFoto(adminU.getFoto());
-		admin.setPassword(passwordEncoder.encode(adminU.getPassword()));
+
+		if (adminU.getFoto() == null || adminU.getFoto().trim().isEmpty()) {
+			admin.setFoto(
+					"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png");
+		} else {
+			admin.setFoto(adminU.getFoto());
+		}
+
+		if (adminU.getPassword() != null && !adminU.getPassword().isEmpty()) {
+			admin.setPassword(passwordEncoder.encode(adminU.getPassword()));
+		}
 
 		return adminRepository.save(admin);
 	}

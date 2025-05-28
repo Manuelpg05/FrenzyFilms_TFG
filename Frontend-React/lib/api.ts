@@ -268,6 +268,44 @@ export async function createAdmin(data: { username: string; password: string; em
   }
 }
 
+export async function updateUsuario(data: any, token: string) {
+  const response = await fetch(`${API_URL}/usuario`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null)
+    const errorMsg = errorData?.message || "Error al actualizar el perfil."
+    throw new Error(errorMsg)
+  }
+
+  return response.json()
+}
+
+export async function updateAdmin(data: any, token: string) {
+  const response = await fetch(`${API_URL}/admin`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null)
+    const errorMsg = errorData?.message || "Error al actualizar el perfil."
+    throw new Error(errorMsg)
+  }
+
+  return response.json()
+}
+
 export async function getUserProfile(token: string) {
   const response = await fetch(`${API_URL}/userLogin`, {
     headers: { Authorization: `Bearer ${token}` },

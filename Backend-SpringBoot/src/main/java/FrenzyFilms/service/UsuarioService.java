@@ -64,8 +64,17 @@ public class UsuarioService {
 		usuario.setNombre(usuarioU.getNombre());
 		usuario.setEmail(usuarioU.getEmail());
 		usuario.setTelefono(usuarioU.getTelefono());
-		usuario.setFoto(usuarioU.getFoto());
-		usuario.setPassword(passwordEncoder.encode(usuarioU.getPassword()));
+
+		if (usuarioU.getFoto() == null || usuarioU.getFoto().trim().isEmpty()) {
+			usuario.setFoto(
+					"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png");
+		} else {
+			usuario.setFoto(usuarioU.getFoto());
+		}
+
+		if (usuarioU.getPassword() != null && !usuarioU.getPassword().isEmpty()) {
+			usuario.setPassword(passwordEncoder.encode(usuarioU.getPassword()));
+		}
 
 		return usuarioRepository.save(usuario);
 	}

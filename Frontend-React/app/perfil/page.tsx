@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Entradas from "./secciones/MisEntradas"
+import PerfilUsuario from "./secciones/MiPerfil"
 import { getUserProfile } from "@/lib/api"
 import { Roles } from "@/lib/enums"
 import { useState, useEffect } from "react"
@@ -33,29 +34,20 @@ export default function PerfilPage() {
   return (
     <main className="min-h-screen bg-black">
       <div className="container mx-auto py-8 px-4">
-        <Tabs defaultValue="preferencias" className="w-full">
+        <Tabs defaultValue="perfil" className="w-full">
           <div className="flex justify-center mb-8">
             <TabsList className="bg-gray-900 rounded-md flex w-full max-w-md">
-              <TabsTrigger
-                value="preferencias"
-                className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded"
-              >
-                Preferencias
+              <TabsTrigger value="perfil" className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded">
+                Mi Perfil
               </TabsTrigger>
 
               {!isAdmin && (
                 <>
-                  <TabsTrigger
-                    value="entradas"
-                    className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded"
-                  >
+                  <TabsTrigger value="entradas" className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded">
                     Mis Entradas
                   </TabsTrigger>
 
-                  <TabsTrigger
-                    value="historial"
-                    className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded"
-                  >
+                  <TabsTrigger value="historial" className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded">
                     Historial
                   </TabsTrigger>
                 </>
@@ -63,8 +55,8 @@ export default function PerfilPage() {
             </TabsList>
           </div>
 
-          <TabsContent value="preferencias">
-            <h1 className="text-3xl font-bold text-white">Preferencias (aquí lo que desees)</h1>
+          <TabsContent value="perfil">
+            <PerfilUsuario />
           </TabsContent>
 
           {!isAdmin && (

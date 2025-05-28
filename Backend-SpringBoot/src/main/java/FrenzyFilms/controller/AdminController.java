@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import FrenzyFilms.entity.Admin;
+import FrenzyFilms.entity.Usuario;
 import FrenzyFilms.service.AdminService;
 
 @RestController
@@ -36,18 +37,15 @@ public class AdminController {
 	}
 
 	@PutMapping
-	@Operation(summary = "Actualizar un administrador existente")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Administrador actualizado exitosamente"),
-			@ApiResponse(responseCode = "404", description = "Administrador no encontrado"),
-			@ApiResponse(responseCode = "400", description = "Solicitud inválida") })
-	public void updateAdmin(@RequestBody Admin updatedAdmin) {
-		Admin response = adminService.updateAdmin(updatedAdmin);
-		if (response != null) {
-			ResponseEntity.status(HttpStatus.OK).body("Administrador actualizado exitosamente");
-		} else {
-			ResponseEntity.status(HttpStatus.NOT_FOUND).body("Administrador no encontrado");
-		}
-	}
+    @Operation(summary = "Actualizar los datos del administrador autenticado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Administrador actualizado correctamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado")
+    })
+    public ResponseEntity<Admin> updateAdmin(@RequestBody Admin adminU) {
+        Admin actualizado = adminService.updateAdmin(adminU);
+        return ResponseEntity.ok(actualizado);
+    }
 
 	@DeleteMapping
 	@Operation(summary = "Eliminar un administrador logueado")

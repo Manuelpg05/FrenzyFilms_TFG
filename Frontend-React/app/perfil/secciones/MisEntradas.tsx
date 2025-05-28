@@ -226,7 +226,7 @@ export default function Entradas({ modo = "futuras" }: { modo?: "futuras" | "his
       ) : (
         <div className="text-center py-12">
           <h3 className="text-xl text-gray-400 mb-4">No tienes entradas para mostrar</h3>
-          <Button asChild className="bg-red-600 hover:bg-red-700">
+          <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
             <Link href="/">Ver cartelera</Link>
           </Button>
         </div>

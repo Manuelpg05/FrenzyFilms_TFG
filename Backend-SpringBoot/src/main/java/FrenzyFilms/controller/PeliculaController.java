@@ -13,9 +13,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
+import FrenzyFilms.entity.Entrada;
 import FrenzyFilms.entity.Estado;
 import FrenzyFilms.entity.Pelicula;
+import FrenzyFilms.entity.Sesion;
 import FrenzyFilms.service.PeliculaService;
+import FrenzyFilms.service.SesionService;
 
 @RestController
 @RequestMapping("/pelicula")
@@ -24,6 +28,9 @@ public class PeliculaController {
 
     @Autowired
     private PeliculaService peliculaService;
+
+    @Autowired
+    private SesionService sesionService;
 
     @GetMapping
     @Operation(summary = "Obtener todas las películas")
@@ -58,6 +65,26 @@ public class PeliculaController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/sesion/{idSesion}")
+    @Operation(summary = "Obtener la pelicula asociada a una entrada")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pelicula encontrada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Pelicula o sesion no encontrada")
+    })
+    public ResponseEntity<Pelicula> getPeliculaBySesion(@PathVariable int idSesion) {
+        Optional<Sesion> sesionO = sesionService.getSesionById(idSesion);
+        if (!sesionO.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Pelicula> peliculaO = peliculaService.findBySesion(sesionO.get());
+        if (!peliculaO.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(peliculaO.get());
     }
 
     @PostMapping("/importar/{idTmdb}")

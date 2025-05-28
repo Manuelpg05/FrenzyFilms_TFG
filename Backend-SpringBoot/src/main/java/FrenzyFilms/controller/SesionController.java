@@ -1,9 +1,11 @@
 
 package FrenzyFilms.controller;
 
+import FrenzyFilms.entity.Entrada;
 import FrenzyFilms.entity.Pelicula;
 import FrenzyFilms.entity.Sala;
 import FrenzyFilms.entity.Sesion;
+import FrenzyFilms.service.EntradaService;
 import FrenzyFilms.service.PeliculaService;
 import FrenzyFilms.service.SalaService;
 import FrenzyFilms.service.SesionService;
@@ -11,6 +13,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +36,9 @@ public class SesionController {
     @Autowired
     private SalaService salaService;
 
+    @Autowired
+    private EntradaService entradaService;
+
     @GetMapping("/sala/{idSala}")
     @Operation(summary = "Obtener todas las sesiones por sala", description = "Devuelve todas las sesiones asociadas a una sala específica. Solo accesible por administradores.")
     @ApiResponses(value = {
@@ -42,6 +49,28 @@ public class SesionController {
     public ResponseEntity<Set<Sesion>> getSesionesBySala(@PathVariable int idSala) {
         Set<Sesion> sesiones = sesionService.getAllSesionesBySala(idSala);
         return ResponseEntity.ok(sesiones);
+    }
+
+    @GetMapping("/entrada/{idEntrada}")
+    @Operation(summary = "Obtener la sesión asociada a una entrada")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sesión encontrada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Sesión o entrada no encontrada")
+    })
+    public ResponseEntity<Sesion> getSesionByEntrada(@PathVariable int idEntrada) {
+        Entrada entrada;
+        try {
+            entrada = entradaService.getEntradaById(idEntrada);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Sesion> sesionO = sesionService.findByEntrada(entrada);
+        if (!sesionO.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(sesionO.get());
     }
 
     @GetMapping("/pelicula/{idPelicula}")

@@ -74,7 +74,6 @@ public class SalaController {
     }
 
     @PostMapping
-
     @Operation(summary = "Crear una nueva sala")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sala creada correctamente"),

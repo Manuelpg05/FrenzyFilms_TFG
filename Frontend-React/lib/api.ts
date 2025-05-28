@@ -59,6 +59,24 @@ export async function getPeliculaById(id: string) {
   return res.json();
 }
 
+export async function getPeliculaBySesionId(idSesion: number, token: string) {
+  const res = await fetch(`${API_URL}/pelicula/sesion/${idSesion}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const msg = errorData?.message || "No se pudo obtener la película asociada a la sesión";
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
+
+
 // ==================== SESIONES ====================
 
 export async function getSesionesFuturasPorPelicula(id: string) {
@@ -77,7 +95,43 @@ export async function getSesionById(id: string) {
   return res.json();
 }
 
+export async function getSesionByEntradaId(idEntrada: number, token: string) {
+  const res = await fetch(`${API_URL}/sesion/entrada/${idEntrada}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const msg = errorData?.message || "No se pudo obtener la sesión asociada a la entrada";
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
+
+
 // ==================== ENTRADAS ====================
+
+export async function getEntradasUsuarioDetallado(token: string) {
+  const res = await fetch(`${API_URL}/entrada/usuario/detallado`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const msg = errorData?.message || "No se pudieron obtener las entradas detalladas";
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
 
 export async function createEntrada(idSesion: string, fila: number, asiento: number, token: string) {
   const res = await fetch(`${API_URL}/entrada/${idSesion}`, {
@@ -96,6 +150,23 @@ export async function createEntrada(idSesion: string, fila: number, asiento: num
   }
 
   return res.json();
+}
+
+export async function deleteEntrada(id: number, token: string) {
+  const res = await fetch(`${API_URL}/entrada/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const msg = errorData?.message || "No se pudo eliminar la entrada";
+    throw new Error(msg);
+  }
+
+  return res;
 }
 
 // ==================== SALAS ====================

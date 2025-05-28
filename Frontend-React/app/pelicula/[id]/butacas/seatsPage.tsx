@@ -143,7 +143,7 @@ export default function SeatsPage({ id }: { id: string }) {
             }
 
             toast({ title: "Compra realizada", description: "Tus entradas han sido reservadas." });
-            router.push("/perfil");
+            router.push("/");
         } catch (err: any) {
             toast({ title: "Error", description: err.message, variant: "destructive" });
         } finally {

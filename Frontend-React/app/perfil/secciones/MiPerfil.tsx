@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getUserProfile, updateUsuario, updateAdmin } from "@/lib/api"
+import { getUserProfile, updateUsuario, updateAdmin, deleteUsuario, deleteAdmin } from "@/lib/api"
 import { useToast } from "@/components/ui/use-toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Flame } from "lucide-react"
 
 export default function PerfilUsuario() {
@@ -13,7 +14,6 @@ export default function PerfilUsuario() {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState<any>(null)
-    const [isAdmin, setIsAdmin] = useState(false)
     const [formData, setFormData] = useState({
         nombre: "",
         email: "",
@@ -24,16 +24,15 @@ export default function PerfilUsuario() {
     })
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [hasChanges, setHasChanges] = useState(false)
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem("token")
                 if (!token) throw new Error("No estás autenticado")
-
                 const data = await getUserProfile(token)
                 setProfile(data)
-                setIsAdmin(data.rol === "ADMIN")
                 setFormData({
                     nombre: data.nombre || "",
                     email: data.email || "",
@@ -49,7 +48,6 @@ export default function PerfilUsuario() {
                 setLoading(false)
             }
         }
-
         fetchProfile()
     }, [])
 
@@ -63,8 +61,7 @@ export default function PerfilUsuario() {
             formData.passwordActual !== "" ||
             formData.passwordNueva !== "" ||
             formData.confirmarPassword !== ""
-        );
-
+        )
         setHasChanges(isDifferent)
     }, [formData, profile])
 
@@ -76,7 +73,6 @@ export default function PerfilUsuario() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
         const newErrors: Record<string, string> = {}
 
         if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio"
@@ -113,13 +109,17 @@ export default function PerfilUsuario() {
 
         const { passwordActual, passwordNueva, confirmarPassword, ...dataToSend } = formData
         const passwordToSend = passwordNueva || passwordActual
-        ;(dataToSend as any).password = passwordToSend
+        ; (dataToSend as any).password = passwordToSend
 
         try {
             const token = localStorage.getItem("token")
             if (!token) throw new Error("No estás autenticado")
 
-            await (isAdmin ? updateAdmin(dataToSend, token) : updateUsuario(dataToSend, token))
+            if (profile.rol === "ADMIN") {
+                await updateAdmin(dataToSend, token)
+            } else {
+                await updateUsuario(dataToSend, token)
+            }
 
             toast({ title: "Datos actualizados correctamente" })
 
@@ -127,12 +127,32 @@ export default function PerfilUsuario() {
             router.push("/login")
         } catch (error: any) {
             console.error("Error:", error)
-
             if (error && typeof error === "object" && !Array.isArray(error) && Object.keys(error).length > 0) {
                 setErrors(error as Record<string, string>)
             } else if (error instanceof Error) {
                 toast({ title: "Error", description: error.message })
             }
+        }
+    }
+
+    const handleDeleteAccount = async () => {
+        try {
+            const token = localStorage.getItem("token")
+            if (!token) throw new Error("No estás autenticado")
+
+            if (profile.rol === "ADMIN") {
+                await deleteAdmin(token)
+            } else {
+                await deleteUsuario(token)
+            }
+
+            toast({ title: "Cuenta eliminada correctamente" })
+            localStorage.removeItem("token")
+            router.push("/login")
+        } catch (error: any) {
+            toast({ title: "Error al eliminar la cuenta", description: error.message })
+        } finally {
+            setIsDeleteDialogOpen(false)
         }
     }
 
@@ -146,7 +166,17 @@ export default function PerfilUsuario() {
 
     return (
         <div className="bg-gray-900 p-6 rounded-md w-full max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-6">Mi Perfil</h2>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Mi Perfil</h2>
+                <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    className="text-sm"
+                >
+                    Eliminar Cuenta
+                </Button>
+            </div>
 
             <div className="space-y-4 mb-6">
                 <div className="flex items-center gap-4">
@@ -168,7 +198,7 @@ export default function PerfilUsuario() {
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="font-semibold text-white">Rol:</span>
-                        <span className="text-red-600 font-semibold">{isAdmin ? "Administrador" : "Frenzy User"}</span>
+                        <span className="text-red-600 font-semibold">{profile.rol === "ADMIN" ? "Frenzy Admin" : "Frenzy User"}</span>
                         <Flame className="h-4 w-4 text-red-600" />
                     </div>
                 </div>
@@ -178,37 +208,20 @@ export default function PerfilUsuario() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <h3 className="text-lg font-bold text-white">Editar información</h3>
-                <div>
-                    <label className="text-gray-400 text-sm">Nombre</label>
-                    <Input
-                        name="nombre"
-                        value={formData.nombre}
-                        onChange={handleChange}
-                        className={errors.nombre ? "border-red-500" : ""}
-                    />
-                    {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>}
-                </div>
-                <div>
-                    <label className="text-gray-400 text-sm">Email</label>
-                    <Input
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        type="email"
-                        className={errors.email ? "border-red-500" : ""}
-                    />
-                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                </div>
-                <div>
-                    <label className="text-gray-400 text-sm">Teléfono</label>
-                    <Input
-                        name="telefono"
-                        value={formData.telefono}
-                        onChange={handleChange}
-                        className={errors.telefono ? "border-red-500" : ""}
-                    />
-                    {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
-                </div>
+
+                {["nombre", "email", "telefono"].map((field) => (
+                    <div key={field}>
+                        <label className="text-gray-400 text-sm capitalize">{field}</label>
+                        <Input
+                            name={field}
+                            value={(formData as any)[field]}
+                            onChange={handleChange}
+                            type={field === "email" ? "email" : "text"}
+                            className={errors[field] ? "border-red-500" : ""}
+                        />
+                        {errors[field] && <p className="text-red-500 text-xs mt-1">{errors[field]}</p>}
+                    </div>
+                ))}
 
                 <div>
                     <label className="text-gray-400 text-sm">Contraseña actual</label>
@@ -256,6 +269,25 @@ export default function PerfilUsuario() {
                     </Button>
                 </div>
             </form>
+
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="bg-gray-900 text-white border-gray-700">
+                    <DialogHeader>
+                        <DialogTitle>¿Estás seguro de eliminar tu cuenta?</DialogTitle>
+                        <DialogDescription className="text-gray-400">
+                            Esta acción es irreversible. Si tienes entradas activas, no podrás eliminar tu cuenta.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                            Cancelar
+                        </Button>
+                        <Button variant="destructive" onClick={handleDeleteAccount}>
+                            Eliminar cuenta
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

@@ -306,6 +306,58 @@ export async function updateAdmin(data: any, token: string) {
   return response.json()
 }
 
+
+export async function deleteUsuario(token: string) {
+  const response = await fetch(`${API_URL}/usuario`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    let errorMsg = "Error al eliminar la cuenta.";
+
+    if (response.status === 409) {
+      // Caso específico para 409 Conflict
+      errorMsg = "No puedes eliminar tu cuenta si tienes entradas en sesiones futuras.";
+    } else {
+      try {
+        const errorData = await response.json();
+        if (errorData && typeof errorData === "object") {
+          errorMsg = errorData.message || errorMsg;
+        }
+      } catch (e) {
+        // Si no hay JSON válido, mantengo el mensaje por defecto
+      }
+    }
+
+    throw new Error(errorMsg);
+  }
+
+  return true;
+}
+
+
+
+export async function deleteAdmin(token: string) {
+  const response = await fetch(`${API_URL}/admin`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    const errorMsg = errorData?.message || "Error al eliminar la cuenta.";
+    throw new Error(errorMsg);
+  }
+
+  return true;
+}
+
+
 export async function getUserProfile(token: string) {
   const response = await fetch(`${API_URL}/userLogin`, {
     headers: { Authorization: `Bearer ${token}` },

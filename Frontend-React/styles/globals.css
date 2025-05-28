@@ -49,6 +49,39 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Scrollbar personalizado para FrenzyFilms */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(0, 84%, 60%);
+    /* Un rojo vibrante */
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(0, 84%, 70%);
+    /* Un rojo más claro en hover */
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: hsl(0, 0%, 15%);
+    /* Gris oscuro para el track */
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: hsl(0, 0%, 15%);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(0, 84%, 60%) hsl(0, 0%, 15%);
+  }
+
+
   * {
     @apply border-border;
   }

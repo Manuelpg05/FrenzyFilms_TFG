@@ -13,8 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
-import FrenzyFilms.entity.Entrada;
 import FrenzyFilms.entity.Estado;
 import FrenzyFilms.entity.Pelicula;
 import FrenzyFilms.entity.Sesion;

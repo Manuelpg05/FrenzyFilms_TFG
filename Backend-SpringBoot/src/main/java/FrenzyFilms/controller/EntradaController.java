@@ -1,6 +1,7 @@
 
 package FrenzyFilms.controller;
 
+import FrenzyFilms.dto.EntradaDetalladaPlanoDTO;
 import FrenzyFilms.entity.Entrada;
 import FrenzyFilms.service.EntradaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -24,12 +26,24 @@ public class EntradaController {
     @GetMapping("/usuario")
     @Operation(summary = "Obtener todas las entradas del usuario logueado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Entradas obtenidas correctamente"),
-        @ApiResponse(responseCode = "403", description = "Acceso denegado")
+            @ApiResponse(responseCode = "200", description = "Entradas obtenidas correctamente"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado")
     })
     public ResponseEntity<Set<Entrada>> getAllEntradasByUsuario() {
         Set<Entrada> entradas = entradaService.getAllEntradasByUsuario();
         return ResponseEntity.ok(entradas);
+    }
+
+    @GetMapping("/usuario/detallado")
+    @Operation(summary = "Obtener todas las entradas del usuario logueado, con detalles completos de sesión, sala y película")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Entradas detalladas obtenidas correctamente"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado si no estás autenticado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<List<EntradaDetalladaPlanoDTO>> getEntradasDetalladas() {
+        List<EntradaDetalladaPlanoDTO> resultado = entradaService.getEntradasDetalladas();
+        return ResponseEntity.ok(resultado);
     }
 
     @GetMapping("/sesion/{idSesion}")
@@ -47,8 +61,8 @@ public class EntradaController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener una entrada por ID (solo si es del usuario o es admin)")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Entrada encontrada"),
-        @ApiResponse(responseCode = "404", description = "Entrada no encontrada o acceso denegado")
+            @ApiResponse(responseCode = "200", description = "Entrada encontrada"),
+            @ApiResponse(responseCode = "404", description = "Entrada no encontrada o acceso denegado")
     })
     public ResponseEntity<Entrada> getEntradaById(@PathVariable int id) {
         Entrada entrada = entradaService.getEntradaById(id);
@@ -58,8 +72,8 @@ public class EntradaController {
     @PostMapping("/{idSesion}")
     @Operation(summary = "Crear una nueva entrada para una sesión")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Entrada creada correctamente"),
-        @ApiResponse(responseCode = "400", description = "Error al crear entrada (asiento ocupado, sesión empezada, sin asientos)")
+            @ApiResponse(responseCode = "200", description = "Entrada creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Error al crear entrada (asiento ocupado, sesión empezada, sin asientos)")
     })
     public ResponseEntity<Entrada> createEntrada(
             @PathVariable int idSesion,
@@ -71,9 +85,9 @@ public class EntradaController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar una entrada (si eres admin o el propietario)")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Entrada cancelada correctamente"),
-        @ApiResponse(responseCode = "403", description = "No tienes permiso para cancelar la entrada"),
-        @ApiResponse(responseCode = "400", description = "No se puede cancelar con menos de 1 hora")
+            @ApiResponse(responseCode = "200", description = "Entrada cancelada correctamente"),
+            @ApiResponse(responseCode = "403", description = "No tienes permiso para cancelar la entrada"),
+            @ApiResponse(responseCode = "400", description = "No se puede cancelar con menos de 1 hora")
     })
     public ResponseEntity<Void> deleteEntrada(@PathVariable int id) {
         entradaService.deleteEntrada(id);

@@ -82,6 +82,7 @@ public class SecurityConfiguration {
                 // ENTRADA
                 .requestMatchers(HttpMethod.GET, "/entrada/{id}").hasAuthority("USER")
                 .requestMatchers(HttpMethod.GET, "/entrada/usuario").hasAuthority("USER")
+                .requestMatchers(HttpMethod.GET, "/entrada/usuario/detallado").hasAuthority("USER")
                 .requestMatchers(HttpMethod.GET, "/entrada/sesion/{idSesion}").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/entrada/{idSesion}").hasAuthority("USER")
                 .requestMatchers(HttpMethod.DELETE, "/entrada/{id}").hasAuthority("USER")

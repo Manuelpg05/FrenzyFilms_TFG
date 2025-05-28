@@ -1,6 +1,10 @@
 package FrenzyFilms.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import FrenzyFilms.dto.EntradaDetalladaPlanoDTO;
 import FrenzyFilms.entity.Admin;
 import FrenzyFilms.entity.Entrada;
+import FrenzyFilms.entity.Pelicula;
 import FrenzyFilms.entity.Persona;
 import FrenzyFilms.entity.Sala;
 import FrenzyFilms.entity.Usuario;
@@ -35,11 +41,47 @@ public class EntradaService {
 	private SalaService salaService;
 
 	@Autowired
+	private PeliculaService peliculaService;
+
+	@Autowired
 	private JWTUtils JWTUtils;
 
 	public Set<Entrada> getAllEntradasByUsuario() {
 		Usuario usuario = JWTUtils.userLogin();
 		return usuario.getEntradas();
+	}
+
+	public List<EntradaDetalladaPlanoDTO> getEntradasDetalladas() {
+		Usuario usuario = JWTUtils.userLogin();
+		List<EntradaDetalladaPlanoDTO> resultado = new ArrayList<>();
+
+		for (Entrada entrada : usuario.getEntradas()) {
+			Sesion sesion = sesionService.findByEntrada(entrada)
+					.orElseThrow(() -> new EntityNotFoundException("Sesión no encontrada."));
+
+			Sala sala = salaService.findBySesion(sesion)
+					.orElseThrow(() -> new EntityNotFoundException("Sala no encontrada."));
+
+			Pelicula pelicula = peliculaService.findBySesion(sesion)
+					.orElseThrow(() -> new EntityNotFoundException("Película no encontrada."));
+
+			EntradaDetalladaPlanoDTO dto = new EntradaDetalladaPlanoDTO(
+					entrada.getId(),
+					entrada.getNumFila(),
+					entrada.getNumAsiento(),
+					sesion.getId(),
+					sesion.getFecha(),
+					sesion.getHoraInicio(),
+					sesion.getPrecioEntrada(),
+					sesion.getFormato(),
+					sala.getNumSala(),
+					pelicula.getTitulo(),
+					pelicula.getCartel());
+
+			resultado.add(dto);
+		}
+
+		return resultado;
 	}
 
 	public Set<Entrada> getAllEntradasBySesion(int idSesion) {

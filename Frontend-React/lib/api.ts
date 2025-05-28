@@ -69,6 +69,60 @@ export async function getSesionesFuturasPorPelicula(id: string) {
   return res.json()
 }
 
+export async function getSesionById(id: string) {
+  const res = await fetch(`${API_URL}/sesion/${id}`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Error al obtener la sesión con ID ${id}`);
+  }
+  return res.json();
+}
+
+// ==================== ENTRADAS ====================
+
+export async function createEntrada(idSesion: string, fila: number, asiento: number, token: string) {
+  const res = await fetch(`${API_URL}/entrada/${idSesion}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ numFila: fila, numAsiento: asiento }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const msg = errorData?.message || `Esta compra sobrepasa el límite de 10 entradas por usuario o la sesión ya ha empezado`;
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
+
+// ==================== SALAS ====================
+
+export async function getSalaById(id: string) {
+  const res = await fetch(`${API_URL}/sala/${id}`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Error al obtener la sala con ID ${id}`);
+  }
+  return res.json();
+}
+
+export async function getSalaBySesionId(idSesion: string) {
+  console.log("Fetch sala para sesión:", idSesion)
+  const res = await fetch(`${API_URL}/sala/sesion/${idSesion}`, { cache: "no-store" })
+  console.log("Estado respuesta:", res.status)
+  const text = await res.text()
+  console.log("Cuerpo respuesta:", text)
+
+  if (!res.ok) {
+    throw new Error(`Error al obtener la sala para la sesión ${idSesion}`)
+  }
+
+  return JSON.parse(text)
+}
+
+
 // ==================== USUARIOS Y AUTENTICACIÓN ====================
 
 export async function loginUser(username: string, password: string) {

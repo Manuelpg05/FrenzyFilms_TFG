@@ -5,9 +5,8 @@ import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { getUserProfile } from "@/lib/api"
 import { Roles } from "@/lib/enums"
-//import SalasAdmin from "./secciones/SalasAdmin"
+import SalasAdmin from "./secciones/SalasAdmin"
 import PeliculasAdmin from "./secciones/PeliculasAdmin"
-//import SesionesAdmin from "./secciones/SesionesAdmin"
 
 export default function AdminPanel() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -41,10 +40,10 @@ export default function AdminPanel() {
 
   useEffect(() => {
     const section = searchParams.get("seccion")
-    if (section === "salas" || section === "peliculas" || section === "sesiones") {
+    if (section === "salas" || section === "peliculas") {
       setActiveTab(section)
     } else {
-      setActiveTab("salas")
+      setActiveTab("peliculas")
     }
   }, [searchParams])
 
@@ -70,27 +69,14 @@ export default function AdminPanel() {
               >
                 Películas
               </TabsTrigger>
-              <TabsTrigger
-                value="sesiones"
-                className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded"
-              >
-                Sesiones
-              </TabsTrigger>
             </TabsList>
           </div>
-{/*}
           <TabsContent value="salas">
             <SalasAdmin />
           </TabsContent>
-          */}
           <TabsContent value="peliculas">
             <PeliculasAdmin />
           </TabsContent>
-          {/*
-          <TabsContent value="sesiones">
-            <SesionesAdmin />
-          </TabsContent>
-            */}
         </Tabs>
       </div>
     </main>

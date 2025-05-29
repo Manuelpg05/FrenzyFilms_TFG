@@ -97,6 +97,38 @@ export async function importarPeliculaDesdeTmdb(idTmdb: number, token: string) {
   return await response.json()
 }
 
+export async function eliminarPelicula(id: number, token: string) {
+  const response = await fetch(`${API_URL}/pelicula/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const message = await response.text()
+    throw new Error(message || "Error al eliminar la película")
+  }
+
+  return await response.text()
+}
+
+export async function actualizarEstadoPelicula(id: number, nuevoEstado: string, token: string) {
+  const response = await fetch(`${API_URL}/pelicula/${id}/estado/${nuevoEstado}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Error al actualizar el estado de la película");
+  }
+
+  return await response.text();
+}
+
 
 export async function getPeliculaById(id: string) {
   const res = await fetch(`${API_URL}/pelicula/${id}`, { cache: "no-store" });
@@ -231,6 +263,74 @@ export async function deleteEntrada(id: number, token: string) {
 }
 
 // ==================== SALAS ====================
+
+export async function createSala(nuevaSala: { numSala: number; numFilas: number; numColumnas: number }, token: string) {
+  const response = await fetch(`${API_URL}/sala`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(nuevaSala),
+  })
+
+  if (!response.ok) {
+    const message = await response.text()
+    throw new Error(message || "Error al crear la sala")
+  }
+
+  return await response.json()
+}
+
+export async function updateSala(id: number, datosSala: { numSala: number; numFilas: number; numColumnas: number }, token: string) {
+  const response = await fetch(`${API_URL}/sala/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(datosSala),
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Error al actualizar la sala");
+  }
+
+  return await response.json();
+}
+
+
+export async function getSalas(token: string) {
+  const response = await fetch(`${API_URL}/sala`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const message = await response.text()
+    throw new Error(message || "Error al obtener las salas")
+  }
+
+  return await response.json()
+}
+
+export async function eliminarSala(id: number, token: string) {
+  const response = await fetch(`${API_URL}/sala/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const message = await response.text()
+    throw new Error(message || "Error al eliminar la sala")
+  }
+
+  return await response.text()
+}
 
 export async function getSalaById(id: string) {
   const res = await fetch(`${API_URL}/sala/${id}`, { cache: "no-store" });

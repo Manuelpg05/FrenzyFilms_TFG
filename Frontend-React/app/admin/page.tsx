@@ -7,6 +7,7 @@ import { getUserProfile } from "@/lib/api"
 import { Roles } from "@/lib/enums"
 import SalasAdmin from "./secciones/SalasAdmin"
 import PeliculasAdmin from "./secciones/PeliculasAdmin"
+import SesionesAdmin from "./secciones/SesionesAdmin"
 
 export default function AdminPanel() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -40,7 +41,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     const section = searchParams.get("seccion")
-    if (section === "salas" || section === "peliculas") {
+    if (section === "salas" || section === "peliculas" || section === "sesiones") {
       setActiveTab(section)
     } else {
       setActiveTab("peliculas")
@@ -69,6 +70,12 @@ export default function AdminPanel() {
               >
                 Películas
               </TabsTrigger>
+              <TabsTrigger
+                value="sesiones"
+                className="flex-1 text-center data-[state=active]:bg-red-600 data-[state=active]:text-white transition-all duration-500 px-4 py-2 rounded"
+              >
+                Sesiones
+              </TabsTrigger>
             </TabsList>
           </div>
           <TabsContent value="salas">
@@ -76,6 +83,9 @@ export default function AdminPanel() {
           </TabsContent>
           <TabsContent value="peliculas">
             <PeliculasAdmin />
+          </TabsContent>
+          <TabsContent value="sesiones">
+            <SesionesAdmin />
           </TabsContent>
         </Tabs>
       </div>

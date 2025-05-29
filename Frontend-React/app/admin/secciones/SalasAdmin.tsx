@@ -90,7 +90,7 @@ export default function SalasAdmin() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto py-8">
+        <div className="max-w-2xl mx-auto">
             <h1 className="text-3xl font-bold text-center text-white mb-8">Administrar Salas</h1>
 
             <Dialog open={open} onOpenChange={setOpen}>

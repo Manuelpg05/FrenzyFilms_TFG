@@ -172,6 +172,26 @@ export async function getPeliculas(token: string) {
 
 // ==================== SESIONES ====================
 
+export async function createSesion(nuevaSesion: any, idPelicula: string, idSala: string, token: string) {
+  const res = await fetch(`${API_URL}/sesion/P${idPelicula}/S${idSala}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(nuevaSesion),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const msg = errorData?.message || `Error al crear la sesión`;
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
+
+
 export async function getSesionesFuturasPorPelicula(id: string) {
   const res = await fetch(`${API_URL}/sesion/futuras/pelicula/${id}`, { cache: "no-store" })
   if (!res.ok) {

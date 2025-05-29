@@ -34,6 +34,7 @@ type TmdbSearchResult = {
 
 export default function PeliculasAdmin() {
     const [peliculas, setPeliculas] = useState<Pelicula[]>([])
+    const [nuevasImportaciones, setNuevasImportaciones] = useState<Pelicula[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
     const [searchResults, setSearchResults] = useState<TmdbSearchResult[]>([])
@@ -102,7 +103,6 @@ export default function PeliculasAdmin() {
         handleSearch(searchTerm, newPage)
     }
 
-    // Cerrar el listado al hacer click fuera
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -131,7 +131,7 @@ export default function PeliculasAdmin() {
                                 setIsSearchOpen(true)
                             }
                         }}
-                        className="flex-1 bg-transparent border-0 focus-visible:ring-0 text-white"
+                        className="flex-1 bg-transparent border-0 focus-visible:ring-5 text-white"
                     />
                 </div>
 
@@ -179,10 +179,13 @@ export default function PeliculasAdmin() {
                                                 const token = localStorage.getItem("token")
                                                 if (!token) throw new Error("No estás autenticado")
 
-                                                await importarPeliculaDesdeTmdb(movie.id, token)
+                                                const nuevaPelicula: Pelicula = await importarPeliculaDesdeTmdb(movie.id, token)
+                                                setNuevasImportaciones((prev) => [nuevaPelicula, ...prev])
+                                                setIsSearchOpen(false)
+
                                                 toast({
                                                     title: "Película importada",
-                                                    description: `"${movie.title}" fue importada correctamente.`,
+                                                    description: `"${nuevaPelicula.titulo}" fue importada correctamente.`,
                                                 })
                                             } catch (error: any) {
                                                 toast({
@@ -203,6 +206,64 @@ export default function PeliculasAdmin() {
                     </div>
                 )}
             </div>
+
+            {nuevasImportaciones.length > 0 && (
+                <div className="flex flex-col items-center space-y-6 w-full max-w-xl mx-auto mb-8">
+                    <h2 className="text-xl font-bold text-white">Películas recien importadas</h2>
+                    {nuevasImportaciones.map((pelicula) => (
+                        <Card
+                            key={pelicula.id}
+                            className="bg-gray-900 border-gray-800 w-full max-w-xl mx-auto p-4"
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="flex-shrink-0">
+                                    <img
+                                        src={pelicula.cartel}
+                                        alt={pelicula.titulo}
+                                        className="w-24 h-36 object-cover rounded"
+                                    />
+                                </div>
+
+                                <div className="h-36 w-px bg-gray-700" />
+
+                                <div className="flex-1 flex flex-col justify-between text-gray-300 text-sm">
+                                    <div>
+                                        <h2 className="text-lg font-bold text-white">{pelicula.titulo}</h2>
+                                        <p className="text-gray-400 text-xs mb-2">{pelicula.genero} · {pelicula.clasificacionEdad}</p>
+
+                                        <div className="flex items-center mb-1">
+                                            <Calendar className="h-4 w-4 mr-2 text-red-600" />
+                                            <span>Estreno: {new Date(pelicula.fechaEstreno).toLocaleDateString("es-ES")}</span>
+                                        </div>
+                                        <div className="flex items-center mb-1">
+                                            <Clock className="h-4 w-4 mr-2 text-red-600" />
+                                            <span>Duración: {pelicula.duracion} min</span>
+                                        </div>
+                                        <div className="flex items-center mb-1">
+                                            <User className="h-4 w-4 mr-2 text-red-600" />
+                                            <span>Director: {pelicula.director}</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <Tag className="h-4 w-4 mr-2 text-red-600" />
+                                            <span>Calificación: {pelicula.calificacionTmdb.toFixed(1)}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-end pt-2 border-t border-gray-800 mt-2 gap-2">
+                                        <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                                            Editar
+                                        </Button>
+                                        <Button size="sm" variant="destructive">
+                                            Eliminar
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    ))}
+                    <hr className="w-full border-t border-red-600" />
+                </div>
+            )}
 
             {/* Listado de películas actuales */}
             {loading ? (

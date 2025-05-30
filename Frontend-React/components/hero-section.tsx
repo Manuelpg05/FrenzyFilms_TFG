@@ -18,7 +18,10 @@ export default function HeroSection() {
 
   useEffect(() => {
     getPeliculasDestacadas()
-      .then((data) => setDestacadas(data))
+      .then((data) => {
+        const ordenadas = data.sort((a : any, b : any) => new Date(b.fechaEstreno).getTime() - new Date(a.fechaEstreno).getTime());
+        setDestacadas(ordenadas);
+      })
       .catch((err) => console.error(err));
 
     const token = localStorage.getItem("token");
@@ -124,10 +127,13 @@ export default function HeroSection() {
                   {currentMovie.sinopsis}
                 </p>
               </div>
-              <div
-                className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent pointer-events-none transition-opacity duration-300 ${isScrollEnd ? "opacity-0" : "opacity-100"
-                  }`}
-              ></div>
+
+              {scrollRef.current && scrollRef.current.scrollHeight > scrollRef.current.clientHeight && (
+                <div
+                  className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent pointer-events-none transition-opacity duration-300 ${isScrollEnd ? "opacity-0" : "opacity-100"
+                    }`}
+                ></div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-4 mt-4">

@@ -94,31 +94,33 @@ export default function ComingSoon() {
             className="flex space-x-6 overflow-x-auto scrollbar-hide pb-4"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {upcomingMovies.map((movie) => (
-              <div
-                key={movie.id}
-                className="flex-shrink-0 w-[220px] bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-red-600/20 hover:shadow-xl"
-              >
-                <img
-                  src={movie.cartel || "/placeholder.svg"}
-                  alt={movie.titulo}
-                  className="w-full h-[300px] object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{movie.titulo}</h3>
-                  <div className="flex items-center text-gray-400 text-sm">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span>
-                      {new Date(movie.fechaEstreno).toLocaleDateString("es-ES", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
+            {upcomingMovies.slice()
+              .sort((a, b) => new Date(a.fechaEstreno).getTime() - new Date(b.fechaEstreno).getTime())
+              .map((movie) => (
+                <div
+                  key={movie.id}
+                  className="flex-shrink-0 w-[220px] bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-red-600/20 hover:shadow-xl"
+                >
+                  <img
+                    src={movie.cartel || "/placeholder.svg"}
+                    alt={movie.titulo}
+                    className="w-full h-[300px] object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold text-white mb-2 line-clamp-1">{movie.titulo}</h3>
+                    <div className="flex items-center text-gray-400 text-sm">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <span>
+                        {new Date(movie.fechaEstreno).toLocaleDateString("es-ES", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>

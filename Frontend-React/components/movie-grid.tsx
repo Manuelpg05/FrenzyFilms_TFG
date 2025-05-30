@@ -53,80 +53,82 @@ export default function MovieGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9">
-      {peliculas.map((movie) => (
-        <div
-          key={movie.id}
-          className="bg-gray-900 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-red-600/20 hover:shadow-xl"
-          onMouseEnter={() => setHoveredId(movie.id.toString())}
-          onMouseLeave={() => setHoveredId(null)}
-        >
-          <div className="relative">
-            <img
-              src={movie.cartel || "/placeholder.svg"}
-              alt={movie.titulo}
-              className={`w-full object-contain transition-all duration-300 ${hoveredId === movie.id.toString() ? "filter blur-sm brightness-50" : ""
-                }`}
-            />
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9">
+      {peliculas.slice()
+        .sort((a, b) => (b.calificacionTmdb || 0) - (a.calificacionTmdb || 0))
+        .map((movie) => (
+          <div
+            key={movie.id}
+            className="bg-gray-900 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-red-600/20 hover:shadow-xl"
+            onMouseEnter={() => setHoveredId(movie.id.toString())}
+            onMouseLeave={() => setHoveredId(null)}
+          >
+            <div className="relative">
+              <img
+                src={movie.cartel || "/placeholder.svg"}
+                alt={movie.titulo}
+                className={`w-full object-contain transition-all duration-300 ${hoveredId === movie.id.toString() ? "filter blur-sm brightness-50" : ""
+                  }`}
+              />
 
-            {hoveredId === movie.id.toString() && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Button asChild className={`${isAdmin ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"
-                  } text-white`}>
-                  <Link href={`/pelicula/${movie.id}`}>
-                    {isAdmin ? (
-                      <>
-                        <Search className="mr-2 h-4 w-4" />
-                        Ver más
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart className="mr-2 h-4 w-4 text-white" />
-                        Comprar Entradas
-                      </>
-                    )}
-                  </Link>
-                </Button>
-              </div>
-            )}
-            <div className="absolute top-1 right-3 transform translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="relative flex items-center justify-center">
-                <Star className="h-14 w-14 fill-yellow-500 text-yellow-500 drop-shadow-md" />
-                <span className="absolute text-black font-bold text-sm">
-                  {movie.calificacionTmdb ? movie.calificacionTmdb.toFixed(1) : "N/A"}
-                </span>
-              </div>
-            </div>
-            <div className="absolute top-3 left-3 z-20 -translate-x-1/2 -translate-y-1/2">
-              {movie.estado === Estado.ESTRENO && (
-                <StarBurst color="text-red-600" />
+              {hoveredId === movie.id.toString() && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Button asChild className={`${isAdmin ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"
+                    } text-white`}>
+                    <Link href={`/pelicula/${movie.id}`}>
+                      {isAdmin ? (
+                        <>
+                          <Search className="mr-2 h-4 w-4" />
+                          Ver más
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="mr-2 h-4 w-4 text-white" />
+                          Comprar Entradas
+                        </>
+                      )}
+                    </Link>
+                  </Button>
+                </div>
               )}
+              <div className="absolute top-1 right-3 transform translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="relative flex items-center justify-center">
+                  <Star className="h-14 w-14 fill-yellow-500 text-yellow-500 drop-shadow-md" />
+                  <span className="absolute text-black font-bold text-sm">
+                    {movie.calificacionTmdb ? movie.calificacionTmdb.toFixed(1) : "N/A"}
+                  </span>
+                </div>
+              </div>
+              <div className="absolute top-3 left-3 z-20 -translate-x-1/2 -translate-y-1/2">
+                {movie.estado === Estado.ESTRENO && (
+                  <StarBurst color="text-red-600" />
+                )}
+              </div>
+            </div>
+            <div className="p-4">
+              <h3 className="text-xl font-bold text-white mb-2">{movie.titulo}</h3>
+              <p className="text-gray-400 text-sm mb-2">Dir. {movie.director}</p>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {movie.genero?.split(",").map((g: string) => (
+                  <Badge key={g.trim()} variant="outline" className="text-xs">
+                    {g.trim()}
+                  </Badge>
+                ))}
+              </div>
+              <p className="text-gray-400 text-sm mb-2">
+                {movie.duracion > 0 ? `${movie.duracion} min` : "Duración no disponible"}
+              </p>
+              <p className="text-gray-400 text-xs flex items-center">
+                <Calendar className="h-4 w-4 mr-2" />
+                {new Date(movie.fechaEstreno).toLocaleDateString("es-ES", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </p>
             </div>
           </div>
-          <div className="p-4">
-            <h3 className="text-xl font-bold text-white mb-2">{movie.titulo}</h3>
-            <p className="text-gray-400 text-sm mb-2">Dir. {movie.director}</p>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {movie.genero?.split(",").map((g: string) => (
-                <Badge key={g.trim()} variant="outline" className="text-xs">
-                  {g.trim()}
-                </Badge>
-              ))}
-            </div>
-            <p className="text-gray-400 text-sm mb-2">
-              {movie.duracion > 0 ? `${movie.duracion} min` : "Duración no disponible"}
-            </p>
-            <p className="text-gray-400 text-xs flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
-              {new Date(movie.fechaEstreno).toLocaleDateString("es-ES", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-        </div>
-      ))}
+        ))}
     </div>
   )
 }

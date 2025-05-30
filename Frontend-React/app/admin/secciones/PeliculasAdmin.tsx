@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Loader2, Calendar, Clock, User, Tag } from "lucide-react"
 import { getPeliculas } from "@/lib/api"

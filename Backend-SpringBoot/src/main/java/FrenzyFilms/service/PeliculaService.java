@@ -162,14 +162,31 @@ public class PeliculaService {
         String directores = directoresBuilder.length() > 0 ? directoresBuilder.toString() : "Desconocido";
         pelicula.setDirector(directores);
 
-        StringBuilder actoresBuilder = new StringBuilder();
-        for (TmdbCreditsResponse.Cast actor : creditos.getCast()) {
-            if (actoresBuilder.length() > 0) {
-                actoresBuilder.append(", ");
+        // Generar JSON para los actores
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            List<java.util.Map<String, String>> actoresList = new ArrayList<>();
+
+            List<TmdbCreditsResponse.Cast> topActores = creditos.getCast().stream()
+                    .limit(10)
+                    .toList();
+
+            for (TmdbCreditsResponse.Cast actor : topActores) {
+                java.util.Map<String, String> actorInfo = new java.util.HashMap<>();
+                actorInfo.put("nombre", actor.getName());
+                actorInfo.put("personaje", actor.getCharacter());
+                actorInfo.put("foto",
+                        actor.getProfile_path() != null ? "https://image.tmdb.org/t/p/w500" + actor.getProfile_path()
+                                : null);
+                actoresList.add(actorInfo);
             }
-            actoresBuilder.append(actor.getName());
+
+            String actoresJson = mapper.writeValueAsString(actoresList);
+            pelicula.setActores(actoresJson);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar JSON de actores", e);
         }
-        pelicula.setActores(actoresBuilder.toString());
 
         return peliculaRepository.save(pelicula);
     }

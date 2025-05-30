@@ -35,7 +35,12 @@ export default function MovieDetailClient({ peliculaId }: { peliculaId: string }
         return <div className="text-white text-center mt-20">Cargando película...</div>
     }
 
-    const actores = pelicula.actores ? pelicula.actores.split(", ").slice(0, 10) : []
+    let actores = []
+    try {
+        actores = JSON.parse(pelicula.actores)
+    } catch (e) {
+        actores = []
+    }
 
     return (
         <main className="min-h-screen bg-black flex flex-col">
@@ -132,14 +137,14 @@ export default function MovieDetailClient({ peliculaId }: { peliculaId: string }
                         </span>
                     </h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {actores.map((nombre: string, index: number) => (
+                        {actores.map((actor: any, index: number) => (
                             <ActorCard
                                 key={index}
                                 actor={{
                                     id: String(index),
-                                    name: nombre,
-                                    character: "Desconocido",
-                                    photo: "/placeholder.svg",
+                                    name: actor.nombre || "Desconocido",
+                                    character: actor.personaje || "Desconocido",
+                                    photo: actor.foto || "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/340px-Default_pfp.svg.png",
                                 }}
                             />
                         ))}

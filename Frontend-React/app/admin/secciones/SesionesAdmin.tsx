@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button"
 import { parse } from "date-fns"
 import CreateSessionButton from "@/components/buttons/create-session"
 import EditarSesionButton from "@/components/buttons/edit-session"
+import DeleteSessionButton from "@/components/buttons/delete-session"
+import { useSearchParams } from "next/navigation"
+
 
 
 type Pelicula = {
@@ -39,41 +42,47 @@ type Sala = {
 }
 
 export default function SesionesAdmin() {
+    const searchParams = useSearchParams();
+    const idPeliculaParam = searchParams.get("idPelicula");
     const [peliculas, setPeliculas] = useState<Pelicula[]>([])
     const [sesiones, setSesiones] = useState<Sesion[]>([])
     const [salas, setSalas] = useState<Sala[]>([])
     const [selectedPelicula, setSelectedPelicula] = useState<Pelicula | null>(null)
-    const [selectedSala, setSelectedSala] = useState<string>("")
     const [searchOpen, setSearchOpen] = useState(false)
-    const [openModal, setOpenModal] = useState(false)
 
     const { toast } = useToast()
     const searchContainerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const fetchPeliculas = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getPeliculasCartelera()
-                setPeliculas(data)
-            } catch (error: any) {
-                toast({ title: "Error al obtener películas", description: error.message })
-            }
-        }
+                const dataPeliculas = await getPeliculasCartelera();
+                setPeliculas(dataPeliculas);
 
-        const fetchSalas = async () => {
-            try {
-                const token = localStorage.getItem("token")
-                if (!token) throw new Error("No estás autenticado")
-                const data = await getSalas(token)
-                setSalas(data)
-            } catch (error: any) {
-                toast({ title: "Error al obtener salas", description: error.message })
-            }
-        }
+                const token = localStorage.getItem("token");
+                if (!token) throw new Error("No estás autenticado");
+                const dataSalas = await getSalas(token);
+                setSalas(dataSalas);
 
-        fetchPeliculas()
-        fetchSalas()
-    }, [])
+                if (idPeliculaParam) {
+                    const peliSeleccionada = dataPeliculas.find(
+                        (p : any) => p.id.toString() === idPeliculaParam
+                    );
+                    if (peliSeleccionada) {
+                        handleSelectPelicula(peliSeleccionada);
+                    }
+                }
+            } catch (error: any) {
+                toast({
+                    title: "Error",
+                    description: error.message,
+                    variant: "destructive",
+                });
+            }
+        };
+
+        fetchData();
+    }, [idPeliculaParam]);
 
     const handleSelectPelicula = async (peli: Pelicula) => {
         try {
@@ -111,12 +120,12 @@ export default function SesionesAdmin() {
     }, [])
 
     return (
-        <div className="max-w-2xl mx-auto py-8">
+        <div className="max-w-2xl mx-auto">
             <h1 className="text-3xl font-bold text-center text-white mb-8">Administrar Sesiones</h1>
 
             <div ref={searchContainerRef} className="relative mb-8 w-full">
                 <Button
-                    className="w-full bg-gray-900 border border-gray-700 text-white"
+                    className="w-full bg-gray-900 border border-gray-700 text-white hover:bg-gray-800 hover:border-red-600 hover:text-red-500 transition-colors"
                     onClick={() => setSearchOpen(!searchOpen)}
                 >
                     {selectedPelicula ? `Película seleccionada: ${selectedPelicula.titulo}` : "Selecciona una película"}
@@ -146,23 +155,23 @@ export default function SesionesAdmin() {
                                             <div className="flex-1 text-white text-sm flex flex-col gap-1">
                                                 <h3 className="text-base font-medium">{peli.titulo}</h3>
                                                 <div className="flex items-center gap-2">
-                                                    <Film className="h-4 w-4 text-purple-400" />
+                                                    <Film className="shrink-0 h-4 w-4 text-purple-400" />
                                                     <span>Género: {peli.genero}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <BadgeCheck className="h-4 w-4 text-green-600" />
+                                                    <BadgeCheck className="shrink-0 h-4 w-4 text-green-600" />
                                                     <span>Estado: {peli.estado}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <Star className="h-4 w-4 text-yellow-500" />
+                                                    <Star className="shrink-0 h-4 w-4 text-yellow-500" />
                                                     <span>Calificación: {peli.calificacionTmdb?.toFixed(1) || "N/A"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <Ticket className="h-4 w-4 text-red-600" />
+                                                    <Ticket className="shrink-0 h-4 w-4 text-red-600" />
                                                     <span>Sesiones: {peli.sesiones?.length || 0}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <CalendarIcon className="h-4 w-4 text-blue-600" />
+                                                    <CalendarIcon className="shrink-0 h-4 w-4 text-blue-600" />
                                                     <span>Estreno: {peli.fechaEstreno}</span>
                                                 </div>
                                             </div>
@@ -194,23 +203,23 @@ export default function SesionesAdmin() {
                             <div className="flex-1 text-white text-sm flex flex-col gap-1">
                                 <h3 className="text-base font-medium">{selectedPelicula.titulo}</h3>
                                 <div className="flex items-center gap-2">
-                                    <Film className="h-4 w-4 text-purple-400" />
+                                    <Film className="shrink-0 h-4 w-4 text-purple-400" />
                                     <span>Género: {selectedPelicula.genero}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <BadgeCheck className="h-4 w-4 text-green-600" />
+                                    <BadgeCheck className="shrink-0 h-4 w-4 text-green-600" />
                                     <span>Estado: {selectedPelicula.estado}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Star className="h-4 w-4 text-yellow-500" />
+                                    <Star className="shrink-0 h-4 w-4 text-yellow-500" />
                                     <span>Calificación: {selectedPelicula.calificacionTmdb?.toFixed(1) || "N/A"}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Ticket className="h-4 w-4 text-red-600" />
+                                    <Ticket className="shrink-0 h-4 w-4 text-red-600" />
                                     <span>Sesiones: {selectedPelicula.sesiones?.length || 0}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <CalendarIcon className="h-4 w-4 text-blue-600" />
+                                    <CalendarIcon className="shrink-0 h-4 w-4 text-blue-600" />
                                     <span>Estreno: {selectedPelicula.fechaEstreno}</span>
                                 </div>
                             </div>
@@ -235,43 +244,58 @@ export default function SesionesAdmin() {
                                 )
                                 .map((sesion) => (
                                     <Card key={sesion.id} className="bg-gray-900 border-gray-800 p-4 text-white">
-                                        <h2 className="text-lg font-bold mb-2">Sesión ID: {sesion.id}</h2>
-                                        <div className="flex flex-col gap-2 text-sm text-gray-300">
-                                            <div className="flex items-center gap-2">
-                                                <CalendarIcon className="h-4 w-4 text-blue-600" />
-                                                <span>Fecha: {sesion.fecha}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Clock className="h-4 w-4 text-yellow-600" />
-                                                <span>Hora: {sesion.horaInicio.slice(0, 5)}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Tag className="h-4 w-4 text-green-600" />
-                                                <span>Formato: {sesion.formato}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <MapPin className="h-4 w-4 text-orange-900" />
-                                                <span>Sala: {sesion.sala?.numSala || "Desconocida"}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Film className="h-4 w-4 text-purple-400" />
-                                                <span>Precio: {sesion.precioEntrada}€</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Ticket className="h-4 w-4 text-red-600" />
-                                                <span>Entradas vendidas: {sesion.entradas?.length || 0}</span>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h2 className="text-lg font-bold">Sesión ID: {sesion.id}</h2>
+                                            <div className="flex gap-2">
+                                                <EditarSesionButton
+                                                    sesion={sesion}
+                                                    onSesionActualizada={(sesionActualizada) =>
+                                                        setSesiones((prev) =>
+                                                            prev.map((s) => (s.id === sesionActualizada.id ? { ...s, ...sesionActualizada } : s))
+                                                        )
+                                                    }
+                                                />
+
+                                                <DeleteSessionButton
+                                                    sesionId={sesion.id}
+                                                    sesionLabel={`ID ${sesion.id}`}
+                                                    onSesionEliminada={(idEliminado) =>
+                                                        setSesiones((prev) => prev.filter((s) => s.id !== idEliminado))
+                                                    }
+                                                />
                                             </div>
                                         </div>
 
-                                        <div className="mt-4 flex justify-end">
-                                            <EditarSesionButton
-                                                sesion={sesion}
-                                                onSesionActualizada={(sesionActualizada) =>
-                                                    setSesiones((prev) =>
-                                                        prev.map((s) => (s.id === sesionActualizada.id ? { ...s, ...sesionActualizada } : s))
-                                                    )
-                                                }
-                                            />
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-300 max-w-md">
+                                            <div className="flex flex-col gap-2 sm:pr-4 sm:border-r sm:border-gray-700">
+                                                <div className="flex items-center gap-2">
+                                                    <CalendarIcon className="h-4 w-4 text-blue-600" />
+                                                    <span>Fecha: {sesion.fecha}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Clock className="h-4 w-4 text-yellow-600" />
+                                                    <span>Hora: {sesion.horaInicio.slice(0, 5)}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Tag className="h-4 w-4 text-green-600" />
+                                                    <span>Formato: {sesion.formato}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2 sm:pl-4">
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="h-4 w-4 text-orange-900" />
+                                                    <span>Sala: {sesion.sala?.numSala || "Desconocida"}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Film className="h-4 w-4 text-purple-400" />
+                                                    <span>Precio: {sesion.precioEntrada}€</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Ticket className="h-4 w-4 text-red-600" />
+                                                    <span>Entradas vendidas: {sesion.entradas?.length || 0}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </Card>
                                 ))}

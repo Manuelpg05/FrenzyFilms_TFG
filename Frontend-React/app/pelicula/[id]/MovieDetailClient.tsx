@@ -112,7 +112,7 @@ export default function MovieDetailClient({ peliculaId }: { peliculaId: string }
                                 isAdmin ? "bg-blue-600 hover:bg-blue-700" : "bg-red-600 hover:bg-red-700"
                             )}
                         >
-                            <Link href={isAdmin ? `/admin/pelicula/${pelicula.id}/sesiones` : `/pelicula/${pelicula.id}/sesiones`}>
+                            <Link href={isAdmin ? `/admin?seccion=sesiones&&idPelicula=${pelicula.id}` : `/pelicula/${pelicula.id}/sesiones`}>
                                 {isAdmin ? "Crear Sesiones" : "Comprar Entradas"}
                                 <ChevronRight className="ml-2 h-5 w-5" />
                             </Link>

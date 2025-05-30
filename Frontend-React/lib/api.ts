@@ -210,6 +210,23 @@ export async function updateSesion(id: number, sesionU: any, token: string) {
   return response.json();
 }
 
+export async function deleteSesion(id: number, token: string) {
+  const response = await fetch(`${API_URL}/sesion/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => null)
+    const errorMessage = text || `No se pudo eliminar la sesión ${id}`
+    throw new Error(errorMessage)
+  }
+
+  return true
+}
+
 export async function getSesionesFuturasPorPelicula(id: string) {
   const res = await fetch(`${API_URL}/sesion/futuras/pelicula/${id}`, { cache: "no-store" })
   if (!res.ok) {

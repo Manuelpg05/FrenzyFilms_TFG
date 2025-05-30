@@ -62,7 +62,8 @@ export default function EditSessionButton({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white flex items-center gap-2">
-          <Pencil className="h-4 w-4" /> Editar
+          <Pencil className="h-4 w-4" />
+          <span className="hidden sm:inline">Editar</span>
         </Button>
       </DialogTrigger>
 
@@ -109,7 +110,7 @@ export default function EditSessionButton({
           <DialogClose asChild>
             <Button variant="outline">Cancelar</Button>
           </DialogClose>
-          <Button onClick={handleActualizar} className="bg-yellow-600 hover:bg-yellow-700">Actualizar sesión</Button>
+          <Button onClick={handleActualizar} className="bg-yellow-600 hover:bg-yellow-700 text-white">Actualizar sesión</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -149,7 +149,7 @@ export default function CreateSessionButton({
           <DialogClose asChild>
             <Button variant="outline">Cancelar</Button>
           </DialogClose>
-          <Button onClick={handleCrearSesion} className="bg-green-600 hover:bg-green-700">Crear sesión</Button>
+          <Button onClick={handleCrearSesion} className="bg-green-600 hover:bg-green-700 text-white">Crear sesión</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -19,7 +19,7 @@ export default function HeroSection() {
   useEffect(() => {
     getPeliculasDestacadas()
       .then((data) => {
-        const ordenadas = data.sort((a : any, b : any) => new Date(b.fechaEstreno).getTime() - new Date(a.fechaEstreno).getTime());
+        const ordenadas = data.sort((a: any, b: any) => new Date(b.fechaEstreno).getTime() - new Date(a.fechaEstreno).getTime());
         setDestacadas(ordenadas);
       })
       .catch((err) => console.error(err));
@@ -152,8 +152,15 @@ export default function HeroSection() {
                   </Link>
                 </Button>
               )}
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
-                Ver Trailer
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10 flex items-center justify-between">
+                <Link
+                  href={`https://www.youtube.com/results?search_query=trailer+oficial+en+español+${currentMovie.titulo.replace(/\s+/g, "+")}`}
+                  target="_blank"
+                  className="flex items-center"
+                >
+                  <span>Ver Trailer en YouTube</span>
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
             </div>
           </div>

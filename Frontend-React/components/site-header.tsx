@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
 import { getUserProfile } from "@/lib/api"
 import { Roles } from "@/lib/enums"
 
@@ -28,7 +27,6 @@ export default function SiteHeader() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<CinemaUser | null>(null)
   const router = useRouter()
-  const { theme } = useTheme()
 
   useEffect(() => {
     const fetchUser = async () => {

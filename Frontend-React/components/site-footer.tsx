@@ -5,6 +5,9 @@ import { Mail, Phone, MapPin } from "lucide-react"
 import { useState, useEffect } from "react"
 import { getUserProfile } from "@/lib/api"
 import { Roles } from "@/lib/enums"
+import ModalCookies from "./legal-info/cookies-policy"
+import ModalPrivacidad from "./legal-info/privacy-policy"
+import ModalTerminos from "./legal-info/terms-and-conditions"
 
 export default function SiteFooter() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -109,23 +112,16 @@ export default function SiteFooter() {
             <h3 className="text-lg font-bold text-white mb-4">Información Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/terminos" className="text-gray-400 hover:text-white">
-                  Términos y Condiciones
-                </Link>
+                <ModalTerminos />
               </li>
               <li>
-                <Link href="/privacidad" className="text-gray-400 hover:text-white">
-                  Política de Privacidad
-                </Link>
+                <ModalPrivacidad />
               </li>
               <li>
-                <Link href="/cookies" className="text-gray-400 hover:text-white">
-                  Política de Cookies
-                </Link>
+                <ModalCookies />
               </li>
             </ul>
           </div>
-
           <div>
             <h3 className="text-lg font-bold text-white mb-4">Contacto</h3>
             <ul className="space-y-2">

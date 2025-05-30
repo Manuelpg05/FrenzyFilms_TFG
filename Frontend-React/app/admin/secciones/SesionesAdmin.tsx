@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Card } from "@/components/ui/card"
-import { BadgeCheck, Calendar as CalendarIcon, Clock, Film, MapPin, Plus, Star, Tag, Ticket } from "lucide-react"
+import { BadgeCheck, Calendar as CalendarIcon, Clock, Film, MapPin, Star, Tag, Ticket } from "lucide-react"
 import { getPeliculasCartelera, getSesionesFuturasPorPelicula, getSalaBySesionId, getSalas } from "@/lib/api"
 import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"

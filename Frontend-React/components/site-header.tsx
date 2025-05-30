@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield, Ticket } from "lucide-react"
+import { Film, UserIcon, UserCog, LogIn, LogOut, Settings, Shield, Ticket, MapPin, Calendar } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,11 +104,14 @@ export default function SiteHeader() {
                 </>
               ) : (
                 <>
-                  <Link href="/admin/pendiente1" className="text-sm font-medium text-gray-300 hover:text-white">
-                    Admin Panel 1
+                  <Link href="/admin?seccion=salas" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Salas
                   </Link>
-                  <Link href="/admin/pendiente2" className="text-sm font-medium text-gray-300 hover:text-white">
-                    Admin Panel 2
+                  <Link href="/admin?seccion=peliculas" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Peliculas
+                  </Link>
+                  <Link href="/admin?seccion=sesiones" className="text-sm font-medium text-gray-300 hover:text-white">
+                    Sesiones
                   </Link>
                 </>
               )}
@@ -168,17 +171,24 @@ export default function SiteHeader() {
                   <>
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gray-800"
-                      onClick={() => router.push("/admin/pendiente1")}
+                      onClick={() => router.push("/admin?seccion=salas")}
                     >
-                      <Film className="mr-2 h-4 w-4" />
-                      Admin Panel 1
+                      <MapPin className="mr-2 h-4 w-4" />
+                      Salas
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gray-800"
-                      onClick={() => router.push("/admin/pendiente2")}
+                      onClick={() => router.push("/admin?seccion=peliculas")}
                     >
-                      <Settings className="mr-2 h-4 w-4" />
-                      Admin Panel 2
+                      <Film className="mr-2 h-4 w-4" />
+                      Películas
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="cursor-pointer hover:bg-gray-800"
+                      onClick={() => router.push("/admin?seccion=sesiones")}
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Sesiones
                     </DropdownMenuItem>
                   </>
                 )}

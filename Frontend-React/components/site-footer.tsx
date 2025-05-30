@@ -1,9 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin } from "lucide-react"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { getUserProfile } from "@/lib/api"
 import { Roles } from "@/lib/enums"
 
@@ -85,13 +84,18 @@ export default function SiteFooter() {
                   ) : (
                     <>
                       <li>
-                        <Link href="/admin/pendiente1" className="text-gray-400 hover:text-white">
-                          Admin Panel 1
+                        <Link href="/admin?seccion=salas" className="text-gray-400 hover:text-white">
+                          Salas
                         </Link>
                       </li>
                       <li>
-                        <Link href="/admin/pendiente2" className="text-gray-400 hover:text-white">
-                          Admin Panel 2
+                        <Link href="/admin?seccion=peliculas" className="text-gray-400 hover:text-white">
+                          Películas
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/admin?seccion=sesiones" className="text-gray-400 hover:text-white">
+                          Sesiones
                         </Link>
                       </li>
                     </>
@@ -117,11 +121,6 @@ export default function SiteFooter() {
               <li>
                 <Link href="/cookies" className="text-gray-400 hover:text-white">
                   Política de Cookies
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-gray-400 hover:text-white">
-                  Preguntas Frecuentes
                 </Link>
               </li>
             </ul>

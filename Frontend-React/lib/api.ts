@@ -184,7 +184,7 @@ export async function createSesion(nuevaSesion: any, idPelicula: string, idSala:
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
-    const msg = errorData?.message || `Error al crear la sesión`;
+    const msg = errorData?.message || `Conflicto de horario detectado`;
     throw new Error(msg);
   }
 

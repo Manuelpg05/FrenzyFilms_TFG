@@ -8,7 +8,7 @@ COPY . .
 RUN chmod +x ./mvnw
 RUN ./mvnw clean package
 # Uso de la imagen de OpenJDK pero solo JRE
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 # Establecimiento del directorio de trabajo en el contenedor
 WORKDIR /app
 # Copia del archivo JAR generado desde la imagen del build

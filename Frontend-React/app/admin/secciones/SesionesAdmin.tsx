@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { parse } from "date-fns"
 import CreateSessionButton from "@/components/buttons/create-session"
+import EditarSesionButton from "@/components/buttons/edit-session"
 
 
 type Pelicula = {
@@ -260,6 +261,17 @@ export default function SesionesAdmin() {
                                                 <Ticket className="h-4 w-4 text-red-600" />
                                                 <span>Entradas vendidas: {sesion.entradas?.length || 0}</span>
                                             </div>
+                                        </div>
+
+                                        <div className="mt-4 flex justify-end">
+                                            <EditarSesionButton
+                                                sesion={sesion}
+                                                onSesionActualizada={(sesionActualizada) =>
+                                                    setSesiones((prev) =>
+                                                        prev.map((s) => (s.id === sesionActualizada.id ? { ...s, ...sesionActualizada } : s))
+                                                    )
+                                                }
+                                            />
                                         </div>
                                     </Card>
                                 ))}

@@ -191,6 +191,24 @@ export async function createSesion(nuevaSesion: any, idPelicula: string, idSala:
   return res.json();
 }
 
+export async function updateSesion(id: number, sesionU: any, token: string) {
+  const response = await fetch(`${API_URL}/sesion/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(sesionU),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => null);
+    const errorMessage = text || `No se pudo actualizar la sesión ${id}`;
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
 
 export async function getSesionesFuturasPorPelicula(id: string) {
   const res = await fetch(`${API_URL}/sesion/futuras/pelicula/${id}`, { cache: "no-store" })

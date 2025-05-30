@@ -42,11 +42,13 @@ export default function CreateSessionButton({
       const idPelicula = selectedPelicula.id.toString();
       const idSala = selectedSala;
 
+      const formatoFinal = formato === "3D" ? "TRES_D" : formato;
+
       const nuevaSesion = {
         fecha: format(fecha, "dd-MM-yyyy"),
         horaInicio: `${hora.padStart(2, "0")}:${minuto.padStart(2, "0")}:00`,
         precioEntrada: parseFloat(precio),
-        formato,
+        formato: formatoFinal,
       };
 
       const token = localStorage.getItem("token");

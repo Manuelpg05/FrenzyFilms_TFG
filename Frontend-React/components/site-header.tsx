@@ -82,7 +82,7 @@ export default function SiteHeader() {
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-14 w-14 object-contain" />
-            <span className="text-lg font-bold text-white">FrenzyFilms</span>
+            <span className="text-lg font-bold bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">FrenzyFilms</span>
           </Link>
         </div>
 

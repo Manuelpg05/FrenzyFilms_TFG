@@ -114,7 +114,7 @@ export default function AuthForm({
           <div className="bg-gray-800 p-3 rounded-full">
             <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-16 w-16 object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-white">{title}</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">{title}</h1>
           <p className="text-gray-400 text-sm">{description}</p>
         </div>
 

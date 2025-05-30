@@ -53,7 +53,7 @@ export default function SiteFooter() {
           <div>
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-8 w-8 object-contain" />
-              <span className="text-xl font-bold text-white">FrenzyFilms</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">FrenzyFilms</span>
             </Link>
             <p className="text-sm text-gray-400 mb-4">
               Tu destino cinematográfico preferido, con las mejores películas, la mejor experiencia y el mejor servicio.

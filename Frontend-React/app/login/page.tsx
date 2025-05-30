@@ -58,8 +58,8 @@ export default function LoginPage() {
       password: !formData.password
         ? "La contraseña es requerida"
         : formData.password.length < 6
-        ? "La contraseña debe tener al menos 6 caracteres"
-        : "",
+          ? "La contraseña debe tener al menos 6 caracteres"
+          : "",
     }
 
     setErrors(newErrors)
@@ -109,7 +109,7 @@ export default function LoginPage() {
             <div className="bg-gray-800 p-3 rounded-full">
               <img src="/images/frenzy-films-logo.png" alt="FrenzyFilms Logo" className="h-16 w-16 object-contain" />
             </div>
-            <h1 className="text-2xl font-bold text-white">FrenzyFilms</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent">FrenzyFilms</h1>
             <p className="text-gray-400 text-sm">Inicia sesión para continuar</p>
           </div>
 
@@ -155,12 +155,14 @@ export default function LoginPage() {
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 
+            {/*
             <div className="flex items-center justify-end">
               <a href="#" className="text-sm text-red-400 hover:text-red-300">
                 ¿Olvidaste tu contraseña?
               </a>
             </div>
-
+            */}
+            
             <Button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 text-white">
               {loading ? (
                 <span className="flex items-center justify-center">

@@ -1,4 +1,5 @@
-"use client"
+'use client';
+export const dynamic = 'force-dynamic';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Entradas from "./secciones/MisEntradas"
